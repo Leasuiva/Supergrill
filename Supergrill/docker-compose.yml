@@ -1,0 +1,40 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_python_app
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: Supergrill
+      MYSQL_USER: user
+      MYSQL_PASSWORD: clave123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
+
+# Instrucciones para usar el contenedor MySQL
+# Para iniciar el contenedor, ejecuta:  docker-compose up -d
+# Para detener el contenedor, ejecuta:  docker-compose down               
+# Para acceder al contenedor, ejecuta:  docker exec -it mysql_db bash
+# Para conectarte a MySQL desde el host, usa: mysql -h 127. 0.1 -u root -p
+# Para conectarte a MySQL desde el contenedor, usa: mysql -u root -p            
+# Para conectarte a la base de datos creada, usa: mysql -u usuario -p mi_base
+# Para eliminar el contenedor y los volúmenes, ejecuta: docker-compose down -v
+# Para eliminar solo los volúmenes, ejecuta: docker volume rm nombre_del_volumen
+# Para ver los logs del contenedor, ejecuta: docker logs mysql_db
+# Para ver los logs en tiempo real, ejecuta: docker logs -f mysql_db
+# Para ver los contenedores en ejecución, ejecuta: docker ps
+# Para ver todos los contenedores, ejecuta: docker ps -a
+# Para ver los volúmenes, ejecuta: docker volume ls
+# Para ver la información de un volumen, ejecuta: docker volume inspect nombre_del_volumen
+# Para eliminar un contenedor, ejecuta: docker rm -f nombre_del_contenedor
+# Para eliminar una imagen, ejecuta: docker rmi nombre_de_la_imagen
+# Para eliminar todos los contenedores detenidos, ejecuta: docker rm $(docker ps -aq)
+# Para eliminar todas las imágenes no utilizadas, ejecuta: docker rmi $(docker images -q)
+# Para eliminar todos los volúmenes no utilizados, ejecuta: docker volume rm $(docker volume ls -q)
+# Para eliminar todos los contenedores, imágenes y volúmenes no utilizados, ejecuta: docker system prune -a --volumes
