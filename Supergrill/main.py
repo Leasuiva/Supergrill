@@ -1,5 +1,5 @@
 from tkinter import *
-from ui.pedidos import ViandasUi
+from ui.pedidoss import ViandasUi2
 import os
 from services.conexionDB import Conexiones
 from services.migracionesDB import MigracionesDB
@@ -25,8 +25,8 @@ class Ventana(Tk):
         else:
             print(f"[ERROR] Icono no encontrado en: {icon_path}")
 
-        # Llamada de la función de la ventana de pedidos de cliente
-        self.viandas_ui = ViandasUi(self)
+        # Llamada de la función de la ventana de pedidos de client
+        self.viandas_ui = ViandasUi2(self)
         self.viandas_ui.pack(side=LEFT, fill=BOTH, expand=True)
 
         # Iniciar maximizada
