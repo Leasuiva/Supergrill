@@ -1,7 +1,8 @@
+from tkinter import messagebox
+
 class ModeloDB:
     def __init__(self, conexion):
         self.conn = conexion
-        
 
 #                              ------- CREACIONES DE TABLAS -------
 
@@ -222,30 +223,6 @@ class ModeloDB:
         cursor.close()  
         print("Tabla 'pedidos' creada o ya existía.")
 
-    def obtener_pedidos(self):  
-        cursor = self.conn.cursor()
-        cursor.execute("""
-            SELECT p.id_pedido, d.direccion, e.empresa, c.cadete, p.fecha, p.nombre_cliente, p.estado
-            FROM pedidos p
-            LEFT JOIN direcciones d ON p.id_direccion = d.id_direccion
-            LEFT JOIN empresas e ON p.id_empresa = e.id_empresa
-            LEFT JOIN cadetes c ON p.id_cadete = c.id_cadete
-        """)
-        filas = cursor.fetchall()
-        cursor.close()
-        lista_pedidos = []
-        for fila in filas:
-            lista_pedidos.append({
-                "id_pedido": fila[0],
-                "direccion": fila[1],
-                "empresa": fila[2],
-                "cadete": fila[3],
-                "fecha": fila[4],
-                "nombre_cliente": fila[5],
-                "estado": fila[6]
-            })
-        return lista_pedidos
-
     def insertar_pedido(self, id_direccion, id_empresa, id_cadete, id_usuario, id_forma_pago, fecha, nombre_cliente, estado):
         cursor = self.conn.cursor()
         try:
@@ -346,6 +323,7 @@ class ModeloDB:
         print("Detalle de pedido insertado correctamente.")
 
 
+
 # -----------------------------------------------
 # --- FUNCIONES GENERALES ---
 
@@ -390,8 +368,7 @@ class ModeloDB:
             resultado = cursor.fetchone()
         return resultado[0] if resultado else None
     
-
-
+# --------------------------------------------------------------
 
 
 
