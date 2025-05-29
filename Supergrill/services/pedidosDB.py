@@ -153,6 +153,38 @@ class ModeloDB:
             print(f"Menú '{nombre_menu}' insertado correctamente.")
             # Se puede usar para insertar un menú en la tabla menus 
 
+    def obtener_id_menu(self, tipo_nombre, nombre_menu, nombre_guarnicion=None):
+        with self.conn.cursor(buffered=True) as cursor:
+            # Obtener id del tipo de menú
+            cursor.execute("SELECT id_tipoMenu FROM tipo_menu WHERE tipoMenu = %s", (tipo_nombre,))
+            fila_tipo = cursor.fetchone()
+            if not fila_tipo:
+                return None
+            id_tipo = fila_tipo[0]
+
+            # Obtener id de la guarnición
+            id_guarnicion = None
+            if nombre_guarnicion:
+                cursor.execute("SELECT id_guarnicion FROM guarniciones WHERE guarnicion = %s", (nombre_guarnicion,))
+                fila_guarnicion = cursor.fetchone()
+                if fila_guarnicion:
+                    id_guarnicion = fila_guarnicion[0]
+
+            # Buscar menú con guarnición o sin
+            if id_guarnicion is not None:
+                cursor.execute("""
+                    SELECT id_menu FROM menus
+                    WHERE id_tipoMenu = %s AND nombre_menu = %s AND id_guarnicion = %s
+                """, (id_tipo, nombre_menu, id_guarnicion))
+            else:
+                cursor.execute("""
+                    SELECT id_menu FROM menus
+                    WHERE id_tipoMenu = %s AND nombre_menu = %s AND id_guarnicion IS NULL
+                """, (id_tipo, nombre_menu))
+
+            fila = cursor.fetchone()
+            return fila[0] if fila else None
+
 # -------------------------------------------------
 # --- TABLA GUARNICIONES ---
     def crear_tabla_guarnicion(self):
@@ -197,8 +229,22 @@ class ModeloDB:
         print("Tabla 'usuarios' creada o ya existía.")
 
 # --------------------------------------------------
-# --- TABLA PEDIDOS ---
+# --- TABLA ESTADOS ---
+    def crear_tabla_estados(self):
+        cursor = self.conn.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS estados (
+                id_estado INT AUTO_INCREMENT PRIMARY KEY,
+                estado VARCHAR(50) NOT NULL
+            );
+        """)
+        self.conn.commit()
+        cursor.close()
+        print("Tabla 'estados' creada o ya existía.")
 
+
+# --------------------------------------------------
+# --- TABLA PEDIDOS ---
     def crear_tabla_pedidos(self):
         cursor = self.conn.cursor()
         cursor.execute("""
@@ -210,26 +256,28 @@ class ModeloDB:
                 id_usuario INT,
                 id_forma_pago INT,
                 fecha DATE NOT NULL,
-                nombre_cliente VARCHAR(100),
-                estado VARCHAR(50),
+                id_nombre INT,
+                id_estado INT,
                 FOREIGN KEY (id_direccion) REFERENCES direcciones(id_direccion),
                 FOREIGN KEY (id_empresa) REFERENCES empresas(id_empresa),
                 FOREIGN KEY (id_cadete) REFERENCES cadetes(id_cadete),
                 FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
-                FOREIGN KEY (id_forma_pago) REFERENCES forma_pago(id_forma_pago)
+                FOREIGN KEY (id_forma_pago) REFERENCES forma_pago(id_forma_pago),
+                FOREIGN KEY (id_estado) REFERENCES estados(id_estado),
+                FOREIGN KEY (id_nombre) REFERENCES nombres(id_nombre)
             );
         """)
         self.conn.commit()
         cursor.close()  
         print("Tabla 'pedidos' creada o ya existía.")
 
-    def insertar_pedido(self, id_direccion, id_empresa, id_cadete, id_usuario, id_forma_pago, fecha, nombre_cliente, estado):
+    def insertar_pedido(self, id_direccion, id_empresa, id_cadete, id_usuario, id_forma_pago, fecha, id_nombre, id_estado):
         cursor = self.conn.cursor()
         try:
             cursor.execute("""
-                INSERT INTO pedidos (id_direccion, id_empresa, id_cadete, id_usuario, id_forma_pago, fecha, nombre_cliente, estado)
+                INSERT INTO pedidos (id_direccion, id_empresa, id_cadete, id_usuario, id_forma_pago, fecha, id_nombre, id_estado)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-            """, (id_direccion, id_empresa, id_cadete, id_usuario, id_forma_pago, fecha, nombre_cliente, estado))
+            """, (id_direccion, id_empresa, id_cadete, id_usuario, id_forma_pago, fecha, id_nombre, id_estado))
             self.conn.commit()
         except Exception as e:
             self.conn.rollback()
@@ -244,15 +292,16 @@ class ModeloDB:
         cursor.execute("""
             SELECT 
                 p.id_pedido,
-                COALESCE(d.direccion, '') AS direccion,
-                COALESCE(e.empresa, '') AS empresa,
-                p.nombre_cliente,
-                CONCAT(m.nombre_menu, ' - ', COALESCE(g.guarnicion, '')) AS menu,
+                COALESCE(d.direccion, 'Sin direccion') AS direccion,
+                COALESCE(e.empresa, 'Sin empresa') AS empresa,
+                COALESCE(n.nombre, ' ') AS nombre_cliente,
+                COALESCE(m.nombre_menu, '') AS menu,
+                COALESCE(g.guarnicion, '') AS guarnicion,
                 dp.descripcion,
                 dp.cantidad,
-                fp.forma_pago,
-                c.cadete,
-                p.estado
+                COALESCE(fp.forma_pago, 'Pendiente') AS forma_pago,
+                COALESCE(c.cadete, 'Pendiente') AS cadete,
+                COALESCE(es.estado, ' ') AS estado
             FROM pedidos p
             LEFT JOIN direcciones d ON p.id_direccion = d.id_direccion
             LEFT JOIN empresas e ON p.id_empresa = e.id_empresa
@@ -261,6 +310,8 @@ class ModeloDB:
             LEFT JOIN guarniciones g ON m.id_guarnicion = g.id_guarnicion
             LEFT JOIN forma_pago fp ON p.id_forma_pago = fp.id_forma_pago
             LEFT JOIN cadetes c ON p.id_cadete = c.id_cadete
+            LEFT JOIN estados es ON p.id_estado = es.id_estado 
+            LEFT JOIN nombres n ON p.id_nombre = n.id_nombre            
             
         """)
         resultados = cursor.fetchall()
@@ -361,6 +412,7 @@ class ModeloDB:
             ("cadetes", "cadete"): "id_cadete",
             ("forma_pago", "forma_pago"): "id_forma_pago",
             ("usuarios", "nombre_usuario"): "id_usuario",
+            ("estados", "estado"): "id_estado",
         }
         id_columna = id_column_map.get((tabla, campo), f"id_{campo}")
         with self.conn.cursor(buffered=True) as cursor:

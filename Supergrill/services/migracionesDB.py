@@ -15,6 +15,7 @@ class MigracionesDB:
         modelo.crear_tabla_menus()
         modelo.crear_tabla_forma_pago()
         modelo.crear_tabla_nombres()
+        modelo.crear_tabla_estados()
         modelo.crear_tabla_usuarios()
         modelo.crear_tabla_pedidos()
         modelo.crear_tabla_pedidos_detalle()

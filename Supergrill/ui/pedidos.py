@@ -429,12 +429,18 @@ class ViandasUi(Frame):
 
         estado_var = StringVar()
         cb_estado = ttk.Combobox(frame, textvariable=estado_var, font=("Arial", 14), width=12, state="readonly")
-        cb_estado['values'] = ["Pendiente", "Pagado"]
+        valores_estados = ["Pendiente", "Pagado"]
+        cb_estado['values'] = valores_estados
         cb_estado.current(0)
         cb_estado.grid(row=fila, column=11, padx=5)
         widgets.append(cb_estado)
 
+        # Insertar en la tabla 'estados' si no existen
+        for estado in valores_estados:
+            self.modelo.insertar_valores("estados", "estado", estado)
+
         return widgets, estado_var
+    
 # ------------------------------------------------------------------
 
 ## -------- CAMPO AGREGAR FILA PARA OTRO PEDIDO MAS, BORRAR FILA 
@@ -554,6 +560,8 @@ class ViandasUi(Frame):
                 self.modelo.insertar_valores("nombres", "nombre", nombre_cliente)
             if forma_pago:
                 self.modelo.insertar_valores("forma_pago", "forma_pago", forma_pago)
+            if estado:
+                self.modelo.insertar_valores("estados", "estado", estado)
                 
 
             # Obtener IDs necesarios
@@ -561,6 +569,8 @@ class ViandasUi(Frame):
             id_empresa = self.modelo.obtener_id("empresas", "empresa", empresa) if empresa else None
             id_cadete = self.modelo.obtener_id("cadetes", "cadete", cadete) if cadete else None
             id_forma_pago = self.modelo.obtener_id("forma_pago", "forma_pago", forma_pago) if forma_pago else None
+            id_estado = self.modelo.obtener_id("estados", "estado", estado) if estado else None
+            id_nombre = self.modelo.obtener_id("nombres", "nombre", nombre_cliente) if nombre_cliente else None
             id_usuario = 1  # Por ahora fijo
             fecha = date.today()
 
@@ -568,7 +578,7 @@ class ViandasUi(Frame):
             self.modelo.insertar_pedido(
                 id_direccion, id_empresa, id_cadete,
                 id_usuario, id_forma_pago, fecha,
-                nombre_cliente, estado
+                id_nombre, id_estado
             )
 
             # Obtener ID del nuevo pedido
@@ -589,7 +599,7 @@ class ViandasUi(Frame):
                 # Insertar menú y tipo
                 self.modelo.insertar_tipo_menu(tipo_menu)
                 self.modelo.insertar_menu(tipo_menu, menu, guarnicion)
-                id_menu = self.modelo.obtener_id("menus", "nombre_menu", menu)
+                id_menu = self.modelo.obtener_id_menu(tipo_menu, menu, guarnicion)
 
                 # Insertar detalle
                 self.modelo.insertar_detalle_pedido(id_pedido, id_menu, cantidad, descripcion)
@@ -705,21 +715,18 @@ class ViandasUi(Frame):
             for i, fila in enumerate(resultados, start=1):
                 (
                     _, direccion, empresa, nombre_cliente, menu,
-                    descripcion, cantidad, forma_pago, cadete, estado
+                    guarnicion, descripcion, cantidad, forma_pago, cadete, estado
                 ) = fila
 
                 descripcion = descripcion or ""
                 cantidad = cantidad if cantidad is not None else 0
-
-                # Mostrar dirección o empresa según el caso
                 destino = direccion if direccion else empresa
 
-                # Agregar fila a la lista de pedidos para el buscador
                 self.todos_los_pedidos.append((
                     i,
                     destino,
                     nombre_cliente,
-                    menu,
+                    f"{menu} - {guarnicion}",
                     descripcion,
                     cantidad,
                     forma_pago,
@@ -727,12 +734,11 @@ class ViandasUi(Frame):
                     estado
                 ))
 
-                # Insertar fila en el Treeview
                 self.tree.insert("", "end", values=(
                     i,
                     destino,
                     nombre_cliente,
-                    menu,
+                    f"{menu} - {guarnicion}",
                     descripcion,
                     cantidad,
                     forma_pago,
@@ -810,7 +816,6 @@ class ViandasUi(Frame):
 
 # -------------------------------------------------------------------------------------
 # FUNCIONES DE VALIDACION
-validar_num = lambda num: messagebox.showerror("Error", "La cantidad debe ser un número mayor a 0.") if num.strip() == "" or not num.isdigit()  else num
 
 # ✅ Lista de mejoras y optimizaciones futuras
 # 🧠 Código y arquitectura
