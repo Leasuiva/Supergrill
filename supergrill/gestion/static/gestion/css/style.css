@@ -1,0 +1,1939 @@
+/* ========================================================================== */
+/* 1. NAVBAR Y MENÚ SUPERIOR                                                  */
+/* ========================================================================== */
+.navbar {
+    background-color: #042505;
+    padding: 10px 20px;
+    color: white;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    width: 100%;
+    box-sizing: border-box;
+    flex-shrink: 0; /* No achicarse */
+}
+
+.dropdown { position: relative; display: inline-block; }
+
+.dropbtn {
+    background-color: #ffffff; color: #042505; border: none;
+    padding: 8px 14px; font-size: 14px; border-radius: 5px; cursor: pointer;
+}
+.dropbtn:hover { background-color: #f2f2f2; }
+
+.dropdown-content {
+    display: none; position: absolute; background-color: #ffffff;
+    min-width: 200px; box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    border-radius: 5px; top: 36px; left: 0; z-index: 101; padding: 10px 0;
+}
+
+.dropdown-content button {
+    background: none; border: none; color: #042505;
+    padding: 10px 16px; text-align: left; width: 100%;
+    font-size: 14px; cursor: pointer;
+}
+.dropdown-content button:hover { background-color: #f0f0f0; }
+.dropdown-content.oculto { display: none; }
+.dropdown-content:not(.oculto) { display: block; }
+
+
+/* ========================================================================== */
+/* 2. LAYOUT GENERAL (MODO APP - SIN SCROLL GLOBAL)                           */
+/* ========================================================================== */
+html, body {
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    overflow: hidden; /* 🔥 BLOQUEA EL SCROLL DE LA PÁGINA */
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.formulario, .contenedor-historial {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    
+    /* Ocupar casi toda la pantalla */
+    width: 95vw;
+    height: 92vh;
+    
+    /* Flex para manejar el contenido interno */
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+
+/* ========================================================================== */
+/* 3. INPUTS, CAMPOS Y BOTONES GENERALES                                      */
+/* ========================================================================== */
+.campo { margin-bottom: 16px; position: relative; width: fit-content; }
+.campo label { display: block; margin-bottom: 4px; font-weight: bold; font-size: 14px; }
+.input-radio { display: flex; align-items: center; gap: 10px; }
+
+/* Inputs estándar */
+.formulario input[type="text"],
+.formulario input[type="number"],
+.input-con-icono input[type="text"] {
+    width: 100%; max-width: 150px; height: 30px;
+    padding: 4px 6px; box-sizing: border-box; font-size: 14px;
+    border: 1px solid #ccc; border-radius: 4px;
+}
+
+.input-con-icono { position: relative; display: inline-block; width: fit-content; }
+.input-con-icono input[type="text"] { padding-right: 25px; } /* Espacio para flecha */
+
+.flecha-desplegar {
+    position: absolute; right: 6px; top: 50%;
+    transform: translateY(-50%); cursor: pointer; font-size: 14px; color: #555;
+}
+
+.fila-horizontal { display: flex; align-items: center; gap: 6px; }
+
+/* Botones pequeños (+, iconos) */
+.btn-icono {
+    background: none; border: none; font-size: 18px; padding: 0 4px;
+    margin-left: 2px; cursor: pointer; color: #333;
+}
+.btn-icono:hover { color: green; }
+
+
+/* ========================================================================== */
+/* ESTILOS DE SUGERENCIAS DESPLEGABLES (AUTOCOMPLETADO MODERNO)               */
+/* ========================================================================== */
+.sugerencias {
+    position: absolute; 
+    top: calc(100% + 4px); /* Separación sutil del input */
+    left: 0; 
+    right: 0; 
+    z-index: 9999; /* Z-index bien alto para que flote sobre todo */
+    list-style: none; 
+    padding: 6px 0; 
+    margin: 0; 
+    background: #ffffff;
+    border: 1px solid #d0d7de; 
+    box-shadow: 0 8px 24px rgba(140, 149, 159, 0.2); /* Sombra flotante moderna */
+    max-height: 200px; /* Un poco más de altura para ver más opciones */
+    overflow-y: auto;
+    font-size: 13px; 
+    border-radius: 6px; 
+    display: none;
+    color: #24292f;
+}
+
+/* Cada ítem de la lista */
+.sugerencias li { 
+    padding: 8px 14px; 
+    cursor: pointer; 
+    transition: all 0.15s ease;
+    border-bottom: 1px solid #f6f8fa; /* Línea separadora ultra suave */
+}
+
+/* Quitarle la línea al último elemento */
+.sugerencias li:last-child {
+    border-bottom: none;
+}
+
+/* Efecto al pasar el mouse */
+.sugerencias li:hover, 
+.sugerencias li:focus { 
+    background-color: #f3f6f9; /* Gris azulado muy suave */
+    color: #0969da; /* Azul moderno para resaltar */
+    font-weight: 500;
+    padding-left: 18px; /* Pequeño efecto de movimiento hacia la derecha */
+}
+
+/* Estilizar la barra de scroll de las sugerencias (Solo Webkit/Chrome/Edge) */
+.sugerencias::-webkit-scrollbar {
+    width: 6px;
+}
+.sugerencias::-webkit-scrollbar-track {
+    background: transparent;
+}
+.sugerencias::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}
+.sugerencias::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* ========================================================================== */
+/* EFECTO FOCUS (ILUMINACIÓN) PARA TODOS LOS INPUTS                           */
+/* ========================================================================== */
+.formulario input[type="text"]:focus,
+.formulario input[type="number"]:focus,
+.input-con-icono input[type="text"]:focus,
+.modal-contenido input[type="text"]:focus {
+    border-color: #0969da !important;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.15) !important;
+    transition: all 0.2s ease;
+}
+
+/* ------------------------------------------------------------------------------ */
+
+/* Filas de formulario */
+.fila-dos { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; }
+.fila-dos>.campo { margin-bottom: 8px; }
+
+.contador { display: flex; align-items: center; gap: 5px; }
+.contador button { padding: 4px 10px; font-size: 16px; cursor: pointer; }
+.contador input[type="number"] { width: 70px; text-align: center; }
+
+/* Botones principales (Cargar, Agregar) */
+.botones-pedido { display: flex; gap: 10px; margin-top: 10px; }
+.botones-pedido button {
+    padding: 6px 12px; font-size: 14px; cursor: pointer;
+    border: none; background-color: #042505; color: white;
+    border-radius: 4px; transition: background-color 0.3s ease;
+}
+.botones-pedido button:hover { background-color: #45a049; }
+
+
+/* ========================================================================== */
+/* 4. TABLA Y SCROLL (SOLUCIÓN DE ALINEACIÓN HEADER)                          */
+/* ========================================================================== */
+
+.tabla-scroll {
+    flex: 1; 
+    overflow-y: scroll; 
+    overflow-x: hidden !important; 
+    width: 100%;
+    margin-top: 15px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08); 
+    border: 1px solid #d0d0d0; /* Borde suave que enmarca todo */
+}
+
+/* Forzamos que AMBAS tablas se comporten igual */
+table.sheet {
+    width: 100%;
+    table-layout: fixed; /* 🔥 ESTO ES CRUCIAL PARA QUE NO SE DESPARRAME */
+    border-collapse: separate; 
+    border-spacing: 0;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+}
+
+/* Asegurar que las celdas del historial tengan la misma altura compacta */
+#tablaCargados td {
+    height: 20px;          /* Misma altura mínima que la tabla principal */
+    padding: 0px 2px;      /* Mismo padding lateral */
+    font-size: 11px;
+    vertical-align: middle;
+    border-bottom: 1px solid #eaeff2;
+}
+
+/* Ajuste específico para que la columna de dirección no se rompa */
+
+#tablaCargados .contenedor-direccion {
+    min-height: 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Cambiado de center a flex-start para que el editado no baje */
+    flex-wrap: wrap; /* Permite que los elementos se acomoden mejor */
+}
+
+/* Encabezados */
+/* Encabezado GRANDE (Original) */
+table.sheet th {
+    background-color: #042505;
+    color: white;
+    font-size: 11px;       /* Cambio: 12px -> 11px */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    padding: 6px 4px;      /* Cambio: 10px 8px -> 6px 4px */
+    
+    position: sticky; top: 0; z-index: 20;
+    border-bottom: 3px solid #021a03;
+    border-top: none; border-left: none; border-right: none;
+}
+
+/* Celdas del Cuerpo COMPACTAS (Para Pago y Estado) */
+
+table.sheet td {
+    padding: 0px 2px;      /* Cambio: Menos relleno lateral */
+    font-size: 11px;       /* Cambio: 12px -> 11px */
+    color: #333;
+    vertical-align: middle;
+    word-wrap: break-word; 
+    border-bottom: 1px solid #eaeff2;
+    border-top: none;
+    height: 20px;          /* Cambio: 22px -> 20px */
+}
+
+/* Corrección de los Badges en el historial para que estén centrados */
+#tablaCargados .texto-centro {
+    text-align: center;
+    vertical-align: middle;
+}
+
+
+/* ========================================================================== */
+/* 5. MODALES Y ESTRUCTURA DE FILA (VERSIÓN FINAL LIMPIA)                     */
+/* ========================================================================== */
+
+/* --- CONFIGURACIÓN BASE DEL MODAL (FONDO OSCURO) --- */
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 100; 
+    left: 0; 
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgba(0, 0, 0, 0.4); /* Fondo semitransparente */
+}
+
+/* --- CAJA BLANCA (BASE) --- */
+.modal-contenido {
+    background-color: #fff; 
+    margin: 5% auto; /* Centrado vertical mejorado */
+    padding: 20px;
+    border-radius: 8px; 
+    width: 300px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex; 
+    flex-direction: column; 
+    gap: 10px;
+    
+    /* 🔥 ESTO ES CRUCIAL: Permite que la X se ubique respecto a esta caja */
+    position: relative; 
+}
+
+/* --- BOTÓN CERRAR (X) --- */
+.cerrar { 
+    color: #aaa;
+    /* 🔥 POSICIONAMIENTO ABSOLUTO EN LA ESQUINA */
+    position: absolute;
+    top: 15px;      
+    right: 20px;    
+    
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 101;   
+    line-height: 1; 
+}
+
+.cerrar:hover { color: #000; }
+
+.modal-contenido input { padding: 6px; font-size: 14px; }
+.modal-contenido button {
+    background-color: #4a504b; color: white; padding: 6px;
+    border: none; border-radius: 4px; cursor: pointer;
+}
+
+.btn-cerrar-modal-cant :hover {
+    background-color: red;
+}
+
+/* --- MODAL GRANDE (NUEVO PEDIDO) --- */
+.modal-contenido.grande {
+    width: 1350px; 
+    margin: 30px auto; 
+    padding: 20px 30px;
+    background-color: #fff; 
+    border-radius: 8px;
+    overflow: visible !important; 
+    height: auto !important; 
+    max-height: none !important;
+    display: flex; 
+    flex-direction: column;
+    padding-bottom: 50px; 
+    margin-bottom: 50px;
+    
+    /* Mantenemos relative por seguridad */
+    position: relative; 
+}
+
+
+/* ----------------------------------------------------------- */
+/* GRILLA DE PEDIDO (LAYOUT)                                   */
+/* ----------------------------------------------------------- */
+.fila-pedido { 
+    display: flex; 
+    width: 100%; 
+    gap: 5px; /* Espacio reducido para ganar lugar */
+    margin-bottom: 7px; 
+    align-items: flex-end; /* Alinea todo al piso */
+    flex-wrap: nowrap !important; /* Prohibido bajar de línea */
+}
+
+/* ----------------------------------------------------------- */
+/* DEFINICIÓN DE ANCHOS DE COLUMNA (MATEMÁTICA EXACTA)         */
+/* ----------------------------------------------------------- */
+
+/* 1. Campos Estándar (Nombre, Tipo, Menú, Guarnición) */
+.fila-pedido .campo:nth-child(1),
+.fila-pedido .campo:nth-child(2),
+.fila-pedido .campo:nth-child(3),
+.fila-pedido .campo:nth-child(4) {
+    flex: 0 0 140px !important;
+    min-width: 140px;
+}
+
+/* 2. Descripción: 250px (BIEN GRANDE) */
+.fila-pedido .campo:nth-child(5) {
+    flex: 0 0 250px !important;
+    min-width: 250px;
+}
+
+/* 3. Cantidad: 70px (Chica para el número) */
+.fila-pedido .campo:nth-child(6) {
+    flex: 0 0 70px !important;
+    min-width: 70px;
+}
+
+/* 4. Pago y Estado: 140px (Igual que los estándar) */
+.fila-pedido .campo:nth-child(7),
+.fila-pedido .campo:nth-child(8) {
+    flex: 0 0 140px !important;
+    min-width: 140px;
+}
+
+/* 5. Botón X: 40px (Fijo al final) */
+.fila-pedido .campo:nth-child(9) {
+    flex: 0 0 40px !important;
+    min-width: 40px;
+    
+}
+
+/* ----------------------------------------------------------- */
+/* ESTILOS INTERNOS (INPUTS, SELECTS Y BOTÓN)                  */
+/* ----------------------------------------------------------- */
+
+/* Inputs y Selects: Altura forzada para alineación perfecta */
+.fila-pedido input[type="text"],
+.fila-pedido input[type="number"],
+.fila-pedido select,
+.fila-pedido .input-con-icono { 
+    width: 100% !important; 
+    max-width: none !important;
+    height: 30px !important;      /* 🔥 CLAVE: Todos miden lo mismo de alto */
+    line-height: 30px;
+    box-sizing: border-box;
+}
+
+/* Ajuste fino para Cantidad (Centrado y sin padding) */
+.fila-pedido .campo:nth-child(6) input { 
+    text-align: center; 
+    padding: 0 !important; 
+}
+
+/* Ajuste fino para Selects (Pago y Estado) */
+.fila-pedido select { padding: 0 4px; }
+
+
+/* --- BOTÓN X (ROJO Y CENTRADO) --- */
+.btn-icono.externo {
+    width: 100%; height: 30px; /* Misma altura que inputs */
+    background-color: #ffffff; color: #d32f2f;
+    border: 1px solid #ffcdd2; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 18px; padding: 0; font-weight: bold;
+}
+.btn-icono.externo:hover { background-color: #d32f2f; color: white; }
+
+
+/* --- LABELS (ETIQUETAS) --- */
+
+/* 1. Estilo base para los labels (Primera fila) */
+.fila-pedido label {
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    display: block; 
+    margin-bottom: 5px; 
+    font-weight: bold; 
+    font-size: 13px;
+    width: 100%; 
+    line-height: 1.2;
+    color: #333;
+}
+
+/* 2. Ocultamos etiquetas en TODAS las filas dentro del contenedor dinámico */
+#contenedorPedidos .fila-pedido label { 
+    display: none; 
+}
+
+/* 3. 🔥 LA CLAVE: Si la fila es la PRIMERA del contenedor, forzamos que se vean */
+/* Esto arregla el problema de main.js porque la primera fila siempre será el 'first-child' */
+#contenedorPedidos .fila-pedido:first-child label {
+    display: block !important;
+}
+
+/* 4. Alineación: Aseguramos que los inputs queden siempre "pegados" abajo */
+/* Esto evita que las filas sin labels se vean desalineadas con la primera */
+.fila-pedido {
+    align-items: flex-end !important;
+    gap: 8px;
+}
+
+/* --- ESPACIADO EXCLUSIVO PARA SUB-ÍTEMS --- */
+.fila-subitem {
+    margin-top: 3px !important;    /* Lo separamos un poquito del padre para que respire */
+}
+
+
+/* ========================================================================== */
+/* 6. BOTONES DE ACCIÓN (LÁPIZ, BASURA, TILDE) & HOVERS                       */
+/* ========================================================================== */
+
+/* Contenedores de botones (Ocultos por defecto) */
+.acciones-grupo, .acciones-item {
+    display: flex; gap: 10px; opacity: 0;
+    transition: opacity 0.2s ease-in-out; align-items: center; flex-shrink: 0;
+}
+
+/* Aparecer al Hover */
+.contenedor-direccion:hover .acciones-grupo { opacity: 1; }
+.item-pedido-container:hover .acciones-item { opacity: 1; }
+
+/* Estilos Maestros de los Botones */
+.btn-tilde, .btn-tilde-item,
+.btn-borrar, .btn-borrar-item,
+.btn-editar {
+    background: none; border: none; cursor: pointer;
+    font-size: 1.2rem; padding: 0;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Colores */
+.btn-tilde, .btn-tilde-item     { color: #28a745; }
+.btn-editar                     { color: #007bff; }
+.btn-borrar, .btn-borrar-item   { color: #dc3545; }
+
+/* Animación Zoom */
+.btn-tilde:hover, .btn-tilde-item:hover, 
+.btn-borrar:hover, .btn-borrar-item:hover,
+.btn-editar:hover { transform: scale(1.3); }
+
+
+/* ========================================================================== */
+/* 7. LAYOUT DE ÍTEMS Y DIRECCIONES (FLEXBOX)                                 */
+/* ========================================================================== */
+
+/* --- A. ÍTEM INDIVIDUAL (El pedido) -> COMPACTO --- */
+
+/* Celdas del Cuerpo ULTRA COMPACTAS */
+table.sheet td {
+    padding: 1px 4px;      /* 🔥 MÍNIMO: Casi sin espacio vertical */
+    font-size: 12px;       /* 🔥 LETRA: Bajamos a 12px */
+    color: #333;
+    vertical-align: middle;
+    word-wrap: break-word; 
+    border-bottom: 1px solid #eaeff2;
+    border-top: none;
+    height: 22px;          /* Forzamos altura base baja */
+}
+
+/* --- A. ÍTEM INDIVIDUAL (Forma Redondeada y Ancha) --- */
+.item-pedido-container {
+    display: flex !important; flex-direction: row;
+    justify-content: space-between; align-items: center;
+    width: 100%; 
+    
+    /* 🔥 1. MÁS AIRE A LOS COSTADOS: Aumentamos a 10px el relleno lateral */
+    padding: 2px 6px !important; 
+    
+    /* 🔥 2. BORDES REDONDOS: Usamos 8px para que quede suave */
+    border-radius: 8px !important; 
+    
+    margin: 1px 0;             
+    min-height: 28px;      
+    border-bottom: 1px dashed #ccc; /* Línea separadora suave por defecto */
+    box-sizing: border-box;
+    
+}
+
+.item-pedido-container:last-child { border-bottom: none; }
+
+.item-pedido-container:hover {
+    /* Color gris solicitado */
+    background-color: #dae0e5 !important; 
+    
+    /* Quitamos el borde de abajo para que parezca un botón flotante */
+    border-bottom: 1px solid transparent !important; 
+    
+    /* Mantenemos todo quieto */
+    transform: none !important;
+    box-shadow: none !important;
+    cursor: default;
+}
+
+.texto-pedido {
+    flex: 1; margin-right: 15px; word-break: break-word;
+    font-size: 14px; color: #333;
+}
+
+/* --- B. DIRECCIÓN / EMPRESA (El cuadrado gris) --- */
+/* Quitamos padding a la celda para que el div llene todo */
+table.sheet td.celda-direccion {
+    padding: 0 !important; height: 1px; vertical-align: middle;
+}
+
+
+/* --- B. DIRECCIÓN / EMPRESA -> GRANDE (Original) --- */
+.contenedor-direccion {
+    display: flex !important; justify-content: space-between; align-items: center;
+    width: 100%; height: 100%; 
+    min-height: 28px;      /* 🔥 CLAVE: 40px -> 28px */
+    padding: 4px 6px;      /* Cambio: 8px 10px -> 4px 6px */
+    box-sizing: border-box;
+    transition: background-color 0.15s ease;
+}
+
+
+.contenedor-direccion span {
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-right: 10px;
+}
+
+
+/* ========================================================================== */
+/* 8. PÁGINA HISTORIAL & FILTROS                                              */
+/* ========================================================================== */
+.header-historial {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 15px; flex-shrink: 0;
+}
+
+.filtro-tabla {
+    margin-bottom: 10px; flex-shrink: 0; display: flex; gap: 10px; align-items: center;
+}
+
+/* Unificamos ambos buscadores para que tengan exactamente el mismo tamaño */
+#filtroCargados, #filtroPedidos {
+    width: 300px !important; 
+    padding: 6px 12px !important; 
+    font-size: 13px !important; 
+    border: 1px solid #ccc; 
+    border-radius: 4px;
+    box-sizing: border-box;
+    height: 28px; /* Para que quede perfectamente alineado con el botón de refrescar */
+}
+
+.filtro-tabla button {
+    padding: 5px 10px; background-color: #ffffff; border: none;
+    border-radius: 5px; color: white; font-size: 20px; cursor: pointer;
+    width: 20px; height: 34px; display: flex; align-items: center; justify-content: center;
+}
+.filtro-tabla button:hover { background-color: #f8f8f8; }
+
+/* Anchos específicos para Historial */
+table.sheet th:nth-child(1),
+table.sheet td:nth-child(1) {
+    /*min-width: 260px; max-width: 260px; */
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ========================================================================== */
+/* 10. ESTILOS DE BORDES Y ESTADOS (DEFINITIVO)                               */
+/* ========================================================================== */
+
+/* --- A. COLUMNAS ESTRUCTURALES --- */
+
+.celda-direccion {
+    background-color: #fff;
+    vertical-align: top !important;
+    border-right: 2px solid #d0d0d0 !important;
+    font-weight: 700; color: #222;
+    font-size: 12px !important; /* Cambio: 13px -> 12px */
+}
+
+.celda-cadete {
+    background-color: #fff;
+    text-align: center;
+    vertical-align: middle !important;
+    border-left: 2px solid #d0d0d0 !important;
+    border-right: 2px solid #d0d0d0 !important;
+    font-weight: 700; color: #555;
+    font-size: 12px !important; /* Cambio: 13px -> 12px */
+}
+
+/* Y justo abajo, ajustamos la altura del pedido para que coincida */
+.item-pedido-container {
+    display: flex; justify-content: space-between; align-items: center;
+    min-height: 24px;      /* 🔥 CLAVE: 32px -> 24px */
+}
+
+
+.texto-pedido { font-weight: 500; font-size: 13px; }
+
+/* --- B. BORDES HORIZONTALES (LÓGICA) --- */
+
+/* 1. SEPARADOR INTERNO (Entre pedidos del mismo cliente) */
+/* Una línea gris simple, visible y limpia */
+.borde-interno {
+    border-bottom: 1px solid #ccc !important;
+}
+
+/* 2. SEPARADOR DE GRUPO (Fin del cliente) */
+/* Línea oscura y un poco más gruesa */
+.borde-grupo {
+    border-bottom: 2px solid #444 !important;
+}
+
+/* --- C. BADGES (ETIQUETAS) --- */
+.badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 75px;           /* Cambio: 75px -> 70px */
+    height: 16px;          /* Cambio: 18px -> 16px */
+    border-radius: 3px;
+    font-size: 9px;        /* Cambio: 10px -> 9px */
+    font-weight: 700; text-transform: uppercase;
+}
+
+.badge-pendiente { background-color: #fcb2b2; color: #422b2b; border: 1px solid #fcb2b2; } 
+.badge-pagado    { background-color: #9af1ae; color: #155724; border: 1px solid #c3e6cb; } 
+.badge-efectivo  { background-color: #b9f0ed; color: #00695c; border: 1px solid #bee5eb; } 
+.badge-mp        { background-color: #cce5ff; color: #004085; border: 1px solid #b8daff; } 
+.badge-neutro    { background-color: #f8f9fa; color: #adb5bd; width: 30px; } 
+
+.texto-centro { text-align: center; }
+.fila-nueva { background-color: #d4edda !important; transition: background 1s; }
+
+/* Línea vertical para separar Forma de Pago y Estado */
+.borde-izquierdo-estado {
+    border-left: 2px solid #d0d0d0 !important;
+}
+
+/* Aseguramos que los botones se vean al pasar el mouse */
+.item-pedido-container:hover .acciones-item {
+    opacity: 1 !important;
+}
+
+/* ========================================================================== */
+/* 11. EFECTO HOVER DE GRUPO (UNIFICADO)                                      */
+/* ========================================================================== */
+/* --- FONDO ALTERNADO POR GRUPOS (ZEBRA) --- */
+
+/* Clase para las filas que deben ir en gris */
+tr.grupo-fondo-gris td {
+    background-color: #f1f1f1; 
+}
+
+/* Aseguramos que la celda de la dirección también tome el color */
+tr.grupo-fondo-gris td.celda-direccion {
+    background-color: #f1f1f1; 
+}
+
+
+/* ========================================================================== */
+/* 12. ESTILOS DE COLOR HISTORIAL (GRIS + HOVER BLOQUE)                       */
+/* ========================================================================== */
+
+/* Fondo base (Gris suave) */
+#tablaCargados tbody tr {
+    background-color: #f2f2f2; 
+    transition: background-color 0.1s;
+}
+
+/* HOVER INTELIGENTE: Pinta de gris más oscuro todas las celdas del grupo */
+#tablaCargados tbody tr.hover-grupo-activo td {
+    background-color: #e2e2e2 !important; 
+}
+
+/* EXCEPCIÓN ELIMINADOS (Rojo siempre) */
+.fila-eliminada, 
+.fila-eliminada td,
+.fila-eliminada td.celda-direccion, 
+.fila-eliminada td.celda-cadete {
+    background-color: #ffe6e6 !important;
+    color: #a71d2a !important;
+}
+
+/* Hover Eliminados (Rojo, no gris) */
+.fila-eliminada.hover-grupo-activo td {
+    background-color: #fadbd8 !important;
+}
+
+/* ========================================================================== */
+/* ESTILOS DE HOVER GRUPAL (PARA AMBAS TABLAS)                                */
+/* ========================================================================== */
+
+/* Cuando la clase .hover-grupo-activo está presente, forzamos el color gris */
+#tablaCargados tbody tr.hover-grupo-activo td,
+#tablaPedidos tbody tr.hover-grupo-activo td {
+    background-color: #e2e2e2 !important; /* Gris intermedio para resaltar */
+}
+
+/* Opcional: Si queres que en la tabla principal se note más sobre el fondo blanco */
+#tablaPedidos tbody tr.hover-grupo-activo td {
+    background-color: #dcdcdc !important; 
+}
+
+
+/* ========================================================================== */
+/* --- ESTILO PARA TEXTO EDITADO (BADGE AZUL) --- */
+/* ========================================================================== */
+.fila-editada, 
+.fila-editada td {
+    background-color: transparent !important; /* Anula el fondo azul de la fila entera */
+    transition: background-color 0.3s;
+}
+
+.texto-editado-resaltado {
+    background-color: #e3f2fd;
+    color: #0d47a1;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+    display: inline-block;
+    border: 1px solid #bbdefb;
+    transition: all 0.3s ease;
+    line-height: 1.2;
+}
+
+/* ======================================================= */
+/*  NUEVO HOVER INTEGRAL EN LAS FILAS DE PEDIDO */
+/* ======================================================= */
+
+/* 1. Limpiamos el hover viejo para que no moleste */
+.item-pedido-container:hover {
+    background-color: transparent !important;
+}
+
+/* 2. Cuando el mouse toca CUALQUIER PARTE de la fila... */
+
+/* --- A. PEDIDO (Ya tiene su margen propio natural) --- */
+#tablaPedidos tbody tr:hover .item-pedido-container {
+    background-color: #dae0e5 !important; 
+    border-bottom: 1px solid transparent !important; 
+    transition: background-color 0.1s ease;
+}
+
+
+/* ======================================================= */
+/* ESTILO DEL LAPICITO FANTASMA (EN EL BORDE DERECHO)      */
+/* ======================================================= */
+
+/* Aseguramos que la celda sea el marco de referencia */
+.texto-centro {
+    position: relative !important; 
+}
+
+.btn-editar-celda {
+    background: none; 
+    border: none; 
+    cursor: pointer;
+    font-size: 1.2rem !important; 
+    color: #007bff; 
+    padding: 0;
+
+    /* 🔥 POSICIONAMIENTO ABSOLUTO (AL FONDO A LA DERECHA) */
+    position: absolute;
+    right: 8px;           /* Separación del borde derecho */
+    top: 50%;             /* Centrado vertical */
+    transform: translateY(-50%); /* Corrección exacta del centro */
+    
+    /* Fantasma: Invisible por defecto */
+    opacity: 0; 
+    transition: all 0.2s ease;
+    z-index: 5;
+}
+
+/* APARECER: Cuando pasas el mouse por la celda */
+td.texto-centro:hover .btn-editar-celda {
+    opacity: 1;
+}
+
+/* ZOOM: Cuando pasas el mouse por el lápiz mismo */
+/* (Mantenemos el translateY para que no pierda el centro al crecer) */
+.btn-editar-celda:hover {
+    transform: translateY(-50%) scale(1.3) !important;
+}
+
+/* ======================================================= */
+/* 🔥 BLOQUEO FINAL: QUE NO SE PINTE NADA AL TOCAR DIRECCIÓN */
+/* ======================================================= */
+
+/* 1. Si el mouse está en la DIRECCIÓN, forzamos al Pedido a quedarse quieto */
+#tablaPedidos tbody tr td.celda-direccion:hover ~ td .item-pedido-container {
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+
+/* 2. También apagamos el efecto en Pago y Estado */
+#tablaPedidos tbody tr td.celda-direccion:hover ~ td.texto-centro::before {
+    display: none !important; /* Ocultamos la píldora gris */
+}
+
+
+/* ========================================================================== */
+/* ESTILOS EXCLUSIVOS PARA TABLA PEDIDOS CARGADOS (#tablaCargados)            */
+/* ========================================================================== */
+
+/* 1. Base y Efecto Cebra (Gris / Blanco) */
+#tablaCargados tbody tr {
+    background-color: #fff; /* Base blanca */
+    transition: background-color 0.1s;
+}
+
+#tablaCargados tr.grupo-fondo-gris td {
+    background-color: #f4f4f4 !important; /* Gris suave para grupos pares */
+}
+
+/* Forzamos el color también en la celda de dirección */
+#tablaCargados tr.grupo-fondo-gris td.celda-direccion {
+    background-color: #f4f4f4 !important; 
+}
+
+/* Mantenemos el rojo para eliminados (tiene prioridad) */
+#tablaCargados .fila-eliminada td,
+#tablaCargados .fila-eliminada td.celda-direccion {
+    background-color: #ffe6e6 !important;
+}
+
+
+/* 2. Hover de Grupo (Cuando pasas el mouse por la dirección) */
+#tablaCargados tbody tr.hover-grupo-activo td {
+    background-color: #e2e2e2 !important; /* Gris más oscuro para resaltar todo el grupo */
+}
+#tablaCargados .fila-eliminada.hover-grupo-activo td {
+    background-color: #fadbd8 !important; /* Rojo oscuro al hover */
+}
+
+
+/* 3. Hover "Píldora Gris" (Copiado de la tabla principal) */
+
+/* A. El Pedido */
+#tablaCargados tbody tr:hover .item-pedido-container {
+    background-color: #dae0e5 !important; 
+    border-bottom: 1px solid transparent !important; 
+    transition: background-color 0.1s ease;
+}
+
+
+
+/* A. Para el contenedor del texto (Pedido): 
+   SOLO quitamos el color de fondo. 
+   ¡IMPORTANTE! No usar display: none aquí porque borra el texto. */
+#tablaCargados tbody tr td.celda-direccion:hover ~ td .item-pedido-container {
+    background-color: transparent !important;
+    border-bottom: 1px dashed #ccc !important; /* Restauramos la línea punteada original */
+}
+
+/* B. Para las píldoras de Pago y Estado (::before): 
+   Aquí SÍ ocultamos el elemento porque es solo decoración (el fondo gris) */
+#tablaCargados tbody tr td.celda-direccion:hover ~ td.texto-centro::before {
+    display: none !important;
+}
+
+/* ======================================================= */
+/* 5. IGUALAR ALTURAS Y CORREGIR ICONOS (DEFINITIVO)       */
+/* ======================================================= */
+
+/* 1. Celdas ultra compactas para AMBAS tablas (AHORA ADAPTABLES) */
+#tablaCargados td,
+#tablaPedidos td {
+    height: auto !important;      /* PERMITE CRECER SI ES NECESARIO */
+    min-height: 24px !important;  
+    padding: 2px !important;      
+    vertical-align: middle !important;
+}
+
+/* 2. Contenedor del texto (se adapta al contenido) */
+#tablaCargados .item-pedido-container,
+#tablaPedidos .item-pedido-container {
+    min-height: 24px !important;
+    height: auto !important;      /*  DEJA QUE EL TEXTO EMPUJE HACIA ABAJO */
+    display: flex;
+    align-items: center;
+    overflow: visible !important; /* PROHÍBE CORTAR EL TEXTO */
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+}
+
+/* 🔥 FORZAMOS EL SALTO DE LÍNEA EN EL TEXTO */
+#tablaCargados .texto-pedido,
+#tablaPedidos .texto-pedido {
+    white-space: normal !important;      
+    word-break: break-word !important;   
+    line-height: 1.4 !important;         
+    display: block !important;
+}
+
+/* 3. BOTONES DE TEXTO (Los del medio: al lado del pedido) */
+/* Estos SE MANTIENEN CHICOS para que entren en la línea */
+.acciones-item button {
+    font-size: 13px !important;
+    line-height: 13px !important;
+    padding: 0 2px !important;
+    height: auto !important;
+    transform: none !important;
+}
+
+/* 4. BOTONES DE GRUPO (Izquierda: Check, Lápiz, Basura) */
+/* 🔥 CORRECCIÓN: Los hacemos GRANDES de nuevo pero sin romper la altura */
+.acciones-grupo button {
+    font-size: 18px !important;   /* Tamaño original visual */
+    line-height: 1 !important;    /* Forzamos altura de línea 1 para que no estiren la celda */
+    padding: 0 3px !important;
+    height: 20px !important;      /* Altura fija controlada */
+    width: auto !important;
+    vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* 5. LÁPIZ DE CELDA (Derecha: En Pago y Estado) */
+/* 🔥 CORRECCIÓN: Ajustamos posición y tamaño */
+.btn-editar-celda {
+    font-size: 14px !important;   /* Un poco más grande que 13px para que se vea */
+    right: 4px !important;        /* Pegado al borde derecho */
+    top: 50% !important;
+    transform: translateY(-50%) !important; /* Centrado vertical perfecto */
+    opacity: 0;                   /* Invisible hasta hover */
+}
+
+/* Mostrar lápiz al pasar mouse (Regla de seguridad) */
+td.texto-centro:hover .btn-editar-celda {
+    opacity: 1 !important;
+}
+
+/* 6. Badges (Etiquetas de estado) */
+#tablaCargados .badge,
+#tablaPedidos .badge {
+    height: 16px !important;      /* Un pelín más altas para que respiren */
+    line-height: 16px !important;
+    font-size: 9px !important;
+    margin: 0 !important;
+    display: inline-flex;
+}
+
+/* 7. Celda de Dirección */
+#tablaCargados .contenedor-direccion,
+#tablaPedidos .contenedor-direccion {
+    min-height: 22px !important;
+    padding: 0 4px !important;
+    display: flex; 
+    align-items: center; /* Asegura que los iconos de grupo se centren verticalmente */
+}
+
+/* ======================================================= */
+/* FORZAR ANCHO DE DIRECCIÓN EN HISTORIAL (DEFINITIVO)     */
+/* ======================================================= */
+
+#tablaCargados th:nth-child(1),
+#tablaCargados td:nth-child(1) {
+    width: 22% !important;       /* Fuerza el ancho porcentual */
+    min-width: auto !important;  /* Elimina mínimos en píxeles */
+    max-width: none !important;  /* Elimina máximos en píxeles */
+}
+
+/* ======================================================= */
+/* 6. CONTROL DE ANCHOS - TABLAS (#tablaCargados y #tablaArchivados) */
+/* ======================================================= */
+/* Columna 1: Dirección */
+#tablaCargados th:nth-child(1), #tablaCargados td:nth-child(1),
+#tablaArchivados th:nth-child(1), #tablaArchivados td:nth-child(1) { 
+    width: 22% !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+}
+/* Columna 2: Pedido (Ocupa todo el espacio sobrante) */
+#tablaCargados th:nth-child(2), #tablaCargados td:nth-child(2),
+#tablaArchivados th:nth-child(2), #tablaArchivados td:nth-child(2) { 
+    width: auto !important; 
+}
+/* Columna 3: Cadete */
+#tablaCargados th:nth-child(3), #tablaCargados td:nth-child(3),
+#tablaArchivados th:nth-child(3), #tablaArchivados td:nth-child(3) { 
+    width: 10% !important; 
+}
+/* Columna 4: Pago */
+#tablaCargados th:nth-child(4), #tablaCargados td:nth-child(4),
+#tablaArchivados th:nth-child(4), #tablaArchivados td:nth-child(4) { 
+    width: 12% !important; 
+}
+/* Columna 5: Estado */
+#tablaCargados th:nth-child(5), #tablaCargados td:nth-child(5),
+#tablaArchivados th:nth-child(5), #tablaArchivados td:nth-child(5) { 
+    width: 12% !important; 
+}
+/* Columna 6: Fecha Pedido (SOLO EN ARCHIVADOS) */
+#tablaArchivados th:nth-child(6), #tablaArchivados td:nth-child(6) { 
+    width: 12% !important; /* Le damos el mismo ancho que al Estado */
+}
+
+/* Separador de la celda estado / fecha de pedido */
+#tablaArchivados td.celda-fecha {
+    border-left: 2px solid #d0d0d0 !important;
+}
+
+
+/* ======================================================= */
+/* 7. CONTROL DE ANCHOS - TABLA CARGAR (#tablaPedidos)     */
+/* (Configurada IDÉNTICA a la de Historial)                */
+/* ======================================================= */
+#tablaPedidos th:nth-child(1), #tablaPedidos td:nth-child(1) { 
+    width: 22% !important;       /* Misma dirección ancha */
+    min-width: auto !important; max-width: none !important;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+#tablaPedidos th:nth-child(2), #tablaPedidos td:nth-child(2) { width: auto !important; } /* Pedido ocupa el resto */
+#tablaPedidos th:nth-child(3), #tablaPedidos td:nth-child(3) { width: 10% !important; }  /* Cadete chico */
+#tablaPedidos th:nth-child(4), #tablaPedidos td:nth-child(4) { width: 12% !important; }  /* Pago */
+#tablaPedidos th:nth-child(5), #tablaPedidos td:nth-child(5) { width: 12% !important; }  /* Estado */
+
+/* ======================================================= */
+/* 8. REACTIVAR EL "JUEGUITO" (ZOOM) EN ICONOS DE PEDIDO   */
+/* ======================================================= */
+
+/* Aseguramos que tengan la transición suave activada */
+.acciones-item button {
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Al pasar el mouse, forzamos el zoom (Superando el bloqueo anterior) */
+.acciones-item button:hover {
+    transform: scale(1.3) !important; 
+    z-index: 10; /* Para que quede por encima de todo */
+    cursor: pointer;
+}
+
+/* ========================================================================== */
+/* ESTILOS MODAL CANTIDADES (VERSIÓN COMPACTA & PROLIJA)                      */
+/* ========================================================================== */
+
+body.modal-open { overflow: hidden !important; }
+
+#modalCantidades .modal-contenido {
+    background-color: #f7fafd;
+    border-radius: 10px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0 !important;
+    
+    width: 850px; 
+    max-width: 95%;
+    
+    /* Altura automática inteligente */
+    height: auto;
+    max-height: 92vh; 
+    
+    display: flex;
+    flex-direction: column;
+    overflow: hidden !important; 
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* --- HEADER --- */
+#modalCantidades h3 {
+    margin: 0; padding: 12px; /* Menos padding */
+    text-align: center; color: #333; 
+    font-size: 1.2rem; /* Título un poco más chico */
+    font-weight: 700;
+    background: #fff;
+    border-bottom: 1px solid #e0e0e0;
+    flex-shrink: 0; z-index: 10;
+}
+
+/* --- CUERPO SCROLLEABLE --- */
+#contenedorEscalable {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto; 
+    width: 100%;
+    padding: 15px; 
+    box-sizing: border-box;
+    display: block; 
+}
+
+/* --- GRILLA DE TARJETAS (MODO TETRIS) --- */
+#contenedorTotalesUnificados {
+    display: block; /* Quitamos el grid problemático */
+    column-count: 2; /* Dos columnas por defecto */
+    column-gap: 15px; 
+    width: 100%;
+    padding-bottom: 20px; 
+}
+
+/* --- TARJETAS (SECCIONES) --- */
+.bloque-tipo-menu {
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
+    
+    /* 🔥 EL SECRETO DEL TETRIS: Apila las tarjetas hacia arriba sin cortarlas */
+    break-inside: avoid;
+    page-break-inside: avoid;
+    display: inline-block; 
+    width: 100%;
+    margin-bottom: 15px; 
+}
+
+/* Títulos de sección más compactos */
+.bloque-tipo-menu h5 {
+    background-color: #3d3c3c; color: #fffdfd; 
+    margin: 0; padding: 6px 10px; /* Header más fino */
+    text-align: left; text-transform: uppercase; 
+    font-size: 0.7rem; /* Letra más chica */
+    font-weight: 800; letter-spacing: 0.5px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.bloque-tipo-menu h5.header-oscuro {
+    background-color: #0d7ff0; color: #fff; text-align: center; border: none;
+}
+
+.bloque-tipo-menu ul.lista-totales { list-style: none; padding: 0; margin: 0; }
+
+/* Ítems más compactos */
+.lista-totales li {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 6px 12px; /* Menos relleno vertical */
+    border-bottom: 1px dashed #e0e0e0; 
+    font-size: 0.85rem; /* Texto de comida más chico */
+    color: #333;
+}
+.lista-totales li:last-child { border-bottom: none; }
+
+/* Filas Impares: Blanco puro */
+.lista-totales li:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+/* Filas Pares: Gris suave pero visible */
+.lista-totales li:nth-child(even) {
+    background-color: #f2f4f6; /* Color ajustado para que se note la franja */
+}
+
+/* Ajuste de borde para que combine bien */
+.lista-totales li {
+    border-bottom: 1px solid #e6e6e6; /* Un poco más oscuro el borde */
+}
+
+/* El último no lleva borde */
+.lista-totales li:last-child {
+    border-bottom: none;
+}
+
+.item-actualizado { box-shadow: inset 3px 0 0 #ffc107; background-color: #fffdf5 !important; }
+.nombre-item { margin-right: 10px; font-weight: 500; }
+
+/* Badges (Números) más delicados */
+.badge-conteo {
+    background-color: #28a745; 
+    color: white; 
+    font-weight: 700;
+    padding: 2px 8px; 
+    border-radius: 10px; 
+    font-size: 0.8rem;
+    min-width: 24px; 
+    text-align: center; 
+    flex-shrink: 0;
+}
+
+/* --- FOOTER (TOTAL + BOTONES) --- */
+.modal-footer-custom {
+    padding: 10px 20px; 
+    background-color: #fff;
+    border-top: 1px solid #ddd; 
+    flex-shrink: 0; 
+    z-index: 20;
+    display: flex; 
+    flex-direction: column; 
+    gap: 8px;
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.05); /* Sombra hacia arriba */
+}
+
+/* Barra Negra Total */
+.barra-total-negra {
+    background-color: #212529; color: #fff; text-align: center;
+    padding: 8px; border-radius: 4px; font-weight: 700; font-size: 1.1rem;
+}
+
+.modal-footer-custom .botones-pedido { 
+    display: flex; justify-content: center; gap: 10px; margin: 0; 
+}
+.modal-footer-custom button { 
+    padding: 8px 25px; border-radius: 4px; border: none; cursor: pointer; 
+    font-weight: 600; font-size: 13px;
+}
+.btn-actualizar { background-color: #28a745; color: white; }
+.btn-actualizar:hover { background-color: #218838; }
+
+
+/* Ajuste fino del botón cerrar (La Cruz) */
+#modalCantidades .cerrar {
+    position: absolute;
+    top: 15px;        /* Bien pegado arriba */
+    
+    font-size: 2rem; /* Un poco más grande para que sea fácil de clickear */
+    color: #aaa;
+    line-height: 1;  /* Evita que ocupe espacio extra vertical */
+    z-index: 100;    /* Asegura que esté por encima de todo */
+    cursor: pointer;
+    transition: color 0.2s;
+    
+    /* Opcional: Un fondo circular suave al pasar el mouse */
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    border-radius: 50%;
+}
+
+#modalCantidades .cerrar:hover {
+    color: #333;           /* Se oscurece al pasar el mouse */
+}
+
+
+/* ========================================================================== */
+/* 🔥 MODO COMPACTO Y NOTEBOOK (UNIFICADO A 3 COLUMNAS)                       */
+/* ========================================================================== */
+
+/* 1. Comportamiento del scroll y márgenes en modo compacto */
+#modalCantidades.modo-compacto #contenedorEscalable {
+    overflow-y: auto !important; 
+    padding-top: 5px !important;
+    padding-bottom: 10px !important;
+}
+
+#modalCantidades.modo-compacto #contenedorTotalesUnificados {
+    gap: 6px !important; 
+    margin-bottom: 40px !important; /* 🔥 MARGIN evita que choque con la barra negra */
+    padding-bottom: 0 !important;
+}
+
+/* 2. Achicar letras en modo compacto */
+#modalCantidades.modo-compacto .bloque-tipo-menu h5 {
+    padding: 4px 8px !important; font-size: 0.65rem !important; 
+}
+#modalCantidades.modo-compacto .lista-totales li {
+    padding: 3px 10px !important; min-height: 20px !important; font-size: 0.8rem !important;
+}
+#modalCantidades.modo-compacto .badge-conteo {
+    padding: 1px 6px !important; 
+}
+
+/* 3. Ajuste exclusivo Notebook: ENGORDAR MODAL Y PASAR A 3 COLUMNAS TETRIS */
+@media (max-width: 1400px), (max-height: 850px) {
+    #modalCantidades .modal-contenido {
+        max-height: 88vh !important; 
+        width: 980px !important;     
+    }
+    
+    /* 🔥 COLCHÓN GIGANTE: Asegura que puedas scrollear más allá del Footer negro */
+    #contenedorEscalable {
+        padding-bottom: 80px !important; 
+    }
+    
+    #modalCantidades #contenedorTotalesUnificados,
+    #modalCantidades.modo-compacto #contenedorTotalesUnificados {
+        display: block !important;
+        column-count: 3 !important; /* 🔥 3 Columnas */
+        column-gap: 10px !important;
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important; 
+    }
+
+    #modalCantidades .bloque-tipo-menu,
+    #modalCantidades.modo-compacto .bloque-tipo-menu {
+        margin-bottom: 10px !important; /* Separación vertical entre tarjetas */
+    }
+
+    #modalCantidades h3 { font-size: 1.05rem !important; padding: 10px !important; }
+}
+
+/* 4. Scroll finito para que no moleste visualmente */
+#contenedorEscalable::-webkit-scrollbar { width: 6px; }
+#contenedorEscalable::-webkit-scrollbar-track { background: transparent; }
+#contenedorEscalable::-webkit-scrollbar-thumb { background: #bbb; border-radius: 10px; }
+/* ========================================================================== */
+/* ANIMACIÓN DE CAMBIO (10 SEGUNDOS)                                          */
+/* ========================================================================== */
+
+@keyframes resaltadoCambio {
+    0% { background-color: #fff3cd; }   /* Empieza Amarillo suave */
+    20% { background-color: #ffeeba; }  /* Se mantiene un poco */
+    100% { background-color: #ffffff; } /* Termina en Blanco */
+}
+
+.item-actualizado {
+    animation: resaltadoCambio 10s ease-out forwards; /* Dura 10s */
+    font-weight: bold; /* Opcional: poner negrita el texto también */
+    border-left: 4px solid #ffc107 !important; /* Una barrita lateral para destacar más */
+}
+
+/* ========================================================================== */
+/* AJUSTE PARA VER DIRECCIÓN COMPLETA (Piso, Depto, Timbre)                   */
+/* ========================================================================== */
+
+/* 1. Permitir que el texto baje de línea (wrap) */
+.celda-direccion .titulo-direccion {
+    white-space: normal !important;   /* Permite saltos de línea */
+    overflow: visible !important;     /* Muestra todo el contenido */
+    text-overflow: clip !important;   /* Quita los puntos suspensivos (...) */
+    word-wrap: break-word;            /* Rompe palabras largas si es necesario */
+    display: inline-block;                   /* Asegura que ocupe el bloque */
+    line-height: 1.3;                 /* Un poco de aire entre líneas */
+    max-width: 100%;                  /* Usa todo el ancho disponible */
+    width: auto;
+}
+
+/* 2. Ajustar el contenedor de la celda para que crezca */
+td.celda-direccion {
+    white-space: normal !important;
+    height: auto !important;          /* La altura se ajusta al contenido */
+    padding: 8px 5px !important;      /* Un poco más de espacio interno */
+    vertical-align: middle;           /* Centrado verticalmente */
+}
+
+/* 3. Asegurar que la columna tenga un ancho mínimo decente */
+/* Esto aplica tanto a la tabla principal como al historial */
+table th:first-child, 
+table td:first-child {
+    min-width: 180px; /* Ancho mínimo para que no quede muy apretado */
+}
+
+/* ========================================================================== */
+/* CONTROL TOTAL DEL ALTO DEL HOVER (PAGO Y ESTADO)                           */
+/* ========================================================================== */
+.contenedor-badge-centro {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    
+    width: 100% !important;   /* Ancho del hover */
+    margin: 0 auto !important; 
+
+    height: 22px !important;  
+    
+    padding: 0 6px !important; 
+    border-radius: 8px; /* Redondeado igual a Pedido */
+    box-sizing: border-box;
+    transition: background-color 0.1s ease;
+}
+
+/* 3. El color del hover */
+#tablaPedidos tbody tr:hover .contenedor-badge-centro,
+#tablaCargados tbody tr:hover .contenedor-badge-centro {
+    background-color: #dae0e5 !important;
+}
+
+
+/* -------------------------------------------------------------------------------*/
+/* Estilos del sub menu AGREGAR ITEM*/
+/* 1. Alinea el menú principal justo debajo del botón Opciones */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+#dropdownOpciones {
+    top: 100%;         /* Justo debajo del botón */
+    margin-top: 0;      /* Eliminamos cualquier espacio para no perder el hover */
+    padding-top: 5px;   /* Usamos padding interno en su lugar */
+}
+
+/* 2. Posiciona el submenú escalonado a la derecha */
+.submenu-container {
+    position: relative; /* Importante para que el hijo se posicione respecto a este */
+}
+
+.submenu-content {
+    display: none;
+    position: absolute;
+    left: 100%;        /* 🔥 Sale hacia la derecha del menú principal */
+    top: 0;            /* Alineado a la altura de 'Agregar item' */
+    background-color: #ffffff;
+    min-width: 180px;
+    box-shadow: 4px 0px 10px rgba(0,0,0,0.2);
+    border: 1px solid #ddd;
+    border-radius: 0 5px 5px 5px;
+    z-index: 110;
+}
+
+/* 3. Mostrar el submenú solo al pasar el mouse por 'Agregar item' */
+.submenu-container:hover .submenu-content {
+    display: block !important;
+}
+/* -------------------------------------------------------------------------------*/
+
+/* --- Barra de Búsqueda Compacta y Alineada --- */
+.barra-busqueda-pro {
+    display: flex;
+    align-items: center;
+    background-color: #f8f9fa;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    gap: 10px; /* Espacio entre el buscador y los calendarios */
+    margin-bottom: 15px;
+    width: fit-content; /* Se ajusta al contenido, no ocupa todo el ancho */
+}
+
+.seccion-texto input {
+    width: 250px;
+    height: 32px;
+    padding: 0 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.seccion-fechas {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #333; /* Fondo oscuro elegante */
+    padding: 4px 10px;
+    border-radius: 4px;
+    height: 32px;
+    box-sizing: border-box;
+}
+
+.item-fecha {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.item-fecha label {
+    color: #fff;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.item-fecha input {
+    border: none;
+    border-radius: 3px;
+    height: 22px;
+    font-size: 11px;
+    padding: 0 4px;
+    outline: none;
+}
+
+.btn-cargar-pro {
+    background-color: #4a4a4a;
+    color: white;
+    border: 1px solid #666;
+    height: 24px;
+    padding: 0 10px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: 0.2s;
+}
+
+.btn-cargar-pro:hover {
+    background-color: #1a73e8; /* Azul al pasar el mouse */
+    border-color: #1a73e8;
+}
+
+/* --- Botón Exportar a Excel (Mismo estilo que Cargar) --- */
+.btn-exportar-pro {
+    background-color: #1f6e43; /* Verde estilo Excel */
+    color: white;
+    border: 1px solid #144c2e;
+    height: 24px;              /* Misma altura que .btn-cargar-pro */
+    padding: 0 10px;           
+    border-radius: 3px;
+    font-size: 11px;           
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: 0.2s;
+    white-space: nowrap;       /* Evita que el texto se parta en dos líneas */
+}
+
+.btn-exportar-pro:hover {
+    background-color: #2a945b; /* Verde más claro al pasar el mouse */
+    border-color: #1f6e43;
+}
+/* --------------------------------------------------------------------*/
+/* ESTILOS PARA EL BOTON DE " VER CANTIDADES " EN LA TABLA ARCHIVADOS. */
+.btn-ver-cantidades-min {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-ver-cantidades-min:hover {
+    background-color: #e0e0e0;
+    border-color: #1a73e8;
+    color: #1a73e8;
+}
+
+/* --- Limpieza de Modal de Archivados --- */
+
+/* Contenedor principal sin scrolls */
+.contenedor-flex-tipos {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden !important; /* 🔥 Bloquea el scroll general */
+    padding: 0 !important;
+}
+
+.modal-resumen-header {
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Área de los menús: Si hay muchos, se desplaza pero oculta la barra */
+.modal-resumen-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 15px;
+}
+
+/* Ocultar barra de scroll para estética limpia */
+.modal-resumen-body::-webkit-scrollbar {
+    display: none;
+}
+
+.modal-resumen-body {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Bloque verde del fondo: Fijo y sin desbordes */
+.modal-resumen-footer {
+    background-color: #042505;
+    color: white;
+    text-align: center;
+    padding: 12px;
+    font-weight: bold;
+    font-size: 1.1em;
+    border-radius: 0 0 6px 6px; /* Redondeado solo abajo */
+    flex-shrink: 0;
+}
+
+/* Ajuste de la tarjeta interna */
+.bloque-tipo-menu {
+    margin-bottom: 0 !important;
+}
+
+.lista-totales li {
+    border-bottom: 1px solid #eee;
+}
+
+.navbar {
+    background-color: #042505;
+    padding: 10px 20px; /* Asegura 20px de aire en los bordes */
+    display: flex;
+    align-items: center;
+}
+
+/* Efecto visual para el botón al estar a la derecha */
+.navbar .dropbtn:hover {
+    background-color: #f2f2f2;
+    transform: scale(1.05); /* Un pequeño pulso en lugar de desplazamiento lateral */
+}
+
+
+
+/* ------------------ FIN DE ESTILOS DE LA TABLA ARCHIVADOS ------------*/
+/* --------------------------------------------------------------------*/
+
+/* ------------------ ESTILOS PARA LA TABLA HISTORIAL----- ------------*/
+/* --------------------------------------------------------------------*/
+
+/* Contenedor para el botón en la parte inferior */
+.contenedor-boton-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 0 5px 0; /* Espaciado interno */
+    border-top: 1px solid #eee; /* Línea divisoria sutil */
+    flex-shrink: 0; /* Evita que el contenedor se aplaste */
+}
+
+/* Estilo profesional para el botón de archivado */
+.btn-archivar-final {
+    background-color: #d32f2f; /* Rojo advertencia */
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+}
+
+.btn-archivar-final:hover {
+    background-color: #b71c1c;
+    transform: translateY(-2px); /* Efecto de elevación */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.btn-archivar-final:active {
+    transform: translateY(0);
+}
+
+
+/* ------------------ FIN DE ESTILOS DE LA TABLA HISTORIAL ------------*/
+/* --------------------------------------------------------------------*/
+
+/* ========================================================================== */
+/* ESTILOS NUEVOS: BOTÓN AGREGAR ÍTEM (EN MODAL)                              */
+/* ========================================================================== */
+
+/* Estilo del menú desplegable hacia ARRIBA */
+#menuAgregarItems {
+    position: absolute;
+    bottom: 100%;       /* Se abre hacia arriba */
+    left: 0;
+    min-width: 170px;
+    background-color: #ffffff;
+    box-shadow: 0px -5px 15px rgba(0,0,0,0.2);
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 5px 0;
+    z-index: 2000;      /* Muy alto para que flote sobre todo */
+    margin-bottom: 5px; /* Separación del botón */
+}
+
+/* Ocultar/Mostrar */
+#menuAgregarItems.oculto { display: none; }
+
+/* Estilo de los botones del menú */
+#menuAgregarItems button {
+    width: 100%;
+    text-align: left;
+    padding: 10px 15px;
+    background: none;
+    border: none;
+    color: #333;
+    font-size: 14px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+    border-radius: 0;
+}
+
+#menuAgregarItems button:hover {
+    background-color: #929fac;
+    color: #042505;
+}
+
+#menuAgregarItems button:last-child { border-bottom: none; }
+
+
+#modalTipoMenu, 
+#modalGuarnicion, 
+#modalCadete, 
+#modalFormaPago {
+    z-index: 3000 !important; /* Prioridad máxima */
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* ========================================================================== */
+/* ESTILOS DEL GESTOR DE ÍTEMS (EDITAR / OCULTAR)                             */
+/* ========================================================================== */
+.lista-gestor {
+    list-style: none; 
+    padding: 0; 
+    margin: 0;
+    max-height: 350px; 
+    overflow-y: auto;
+    border: 1px solid #ddd; 
+    border-radius: 4px;
+    background-color: #fafafa;
+}
+
+.lista-gestor li {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    padding: 10px 12px; 
+    border-bottom: 1px solid #eee;
+    background-color: #fff;
+    transition: background-color 0.2s;
+}
+
+.lista-gestor li:last-child { 
+    border-bottom: none; 
+}
+
+.lista-gestor li:hover {
+    background-color: #f0f4f8;
+}
+
+.lista-gestor .item-nombre { 
+    flex: 1; 
+    font-size: 14px; 
+    font-weight: 500;
+    color: #333;
+}
+
+.lista-gestor .item-acciones { 
+    display: flex; 
+    gap: 8px; 
+}
+
+.lista-gestor .item-acciones button {
+    background: none; 
+    border: none; 
+    cursor: pointer; 
+    font-size: 16px;
+    padding: 6px; 
+    border-radius: 4px; 
+    color: #555;
+    transition: all 0.2s;
+    background-color: #f1f1f1;
+}
+
+.lista-gestor .item-acciones button:hover { 
+    transform: scale(1.1); 
+}
+
+.btn-editar-gestor:hover { background-color: #e3f2fd !important; }
+.btn-ocultar-gestor:hover { background-color: #ffebee !important; color: #d32f2f !important; }
+.btn-mostrar-gestor:hover { background-color: #e8f5e9 !important; color: #2e7d32 !important; }
+
+/* Estilo para ítems ocultados ("eliminados suavemente") */
+.item-oculto {
+    background-color: #f9f9f9 !important;
+}
+.item-oculto .item-nombre { 
+    text-decoration: line-through; 
+    color: #999; 
+    font-style: italic;
+}
+/* Color rojo al pasar el mouse por el tacho de basura */
+.btn-borrar-gestor:hover { 
+    background-color: #ffebee !important; 
+    color: #d32f2f !important; 
+}
+
+/* ========================================================================== */
+/* ESTILOS Y CENTRADOS DE MODALES DE LA PARTE "AGREGAR ÍTEMS"                 */
+/* ========================================================================== */
+
+/* 1. Centrado de los títulos de los modales */
+#modalTipoMenu h3, 
+#modalGuarnicion h3, 
+#modalCadete h3, 
+#modalFormaPago h3 {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 25px; 
+    font-size: 22px;
+    font-weight: bold;
+}
+
+/* 2. Contenedor de cada campo (Apila y centra los elementos, y atrapa las sugerencias) */
+#modalTipoMenu .campo,
+#modalGuarnicion .campo,
+#modalCadete .campo,
+#modalFormaPago .campo {
+    position: relative; /* Atrapa a la lista flotante para que no se escape */
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; /* Centra todo horizontalmente */
+    width: 100%; 
+    margin: 15px auto; 
+}
+
+/* 3. Inputs (Ancho fijo para que se vean prolijos y simétricos) */
+#modalTipoMenu .campo input,
+#modalGuarnicion .campo input,
+#modalCadete .campo input,
+#modalFormaPago .campo input {
+    width: 100%;
+    max-width: 260px; 
+    margin-top: 5px;
+}
+
+/* 4. Sugerencias Flotantes (Mismo ancho y centrado perfecto bajo el input) */
+#modalTipoMenu .sugerencias,
+#modalGuarnicion .sugerencias,
+#modalCadete .sugerencias,
+#modalFormaPago .sugerencias {
+    width: 100%;
+    max-width: 260px; 
+    left: 50%;
+    transform: translateX(-50%); /* Centrado matemático exacto */
+    top: 100%; /* Justo debajo del input */
+    margin-top: 2px;
+}
+
+/* ========================================================================== */
+/* HOVER ANIMADO PARA LOS BOTONES "GUARDAR"                                   */
+/* ========================================================================== */
+
+/* Estado normal del botón */
+#modalTipoMenu button[onclick^="guardar"],
+#modalGuarnicion button[onclick^="guardar"],
+#modalCadete button[onclick^="guardar"],
+#modalFormaPago button[onclick^="guardar"] {
+    transition: all 0.2s ease; 
+    cursor: pointer;
+    
+}
+
+/* Efecto al pasar el mouse por encima (Flota y se oscurece) */
+#modalTipoMenu button[onclick^="guardar"]:hover,
+#modalGuarnicion button[onclick^="guardar"]:hover,
+#modalCadete button[onclick^="guardar"]:hover,
+#modalFormaPago button[onclick^="guardar"]:hover {
+    filter: brightness(0.85); 
+    transform: translateY(-2px); 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    background-color: #218838; 
+}
+
+/* Efecto al hacer clic (Se hunde ligeramente) */
+#modalTipoMenu button[onclick^="guardar"]:active,
+#modalGuarnicion button[onclick^="guardar"]:active,
+#modalCadete button[onclick^="guardar"]:active,
+#modalFormaPago button[onclick^="guardar"]:active {
+    transform: translateY(0); 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
+}
+
+/* ========================================================================== */
+/* ESTILO PARA PEDIDOS OCULTOS                                                */
+/* ========================================================================== */
+.fila-oculta, 
+.fila-oculta td,
+.fila-oculta td.celda-direccion, 
+.fila-oculta td.celda-cadete {
+    background-color: #e8eaed !important; /* Gris suave */
+    color: #5f6368 !important;            /* Texto gris oscuro */
+}
+
+/* Hover para los pedidos ocultos */
+.fila-oculta.hover-grupo-activo td {
+    background-color: #dadce0 !important; /* Gris un poco más oscuro al pasar el mouse */
+}
+
+
+

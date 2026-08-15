@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor - Supergrill</title>
+    <link rel="icon" href="{% static 'gestion/logo.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'gestion/css/style_cocina.css' %}?v=2">
+</head>
+<body>
+
+    <div class="header">
+        <h1>🧑‍🍳 SUPERGRILL </h1>
+        <div class="reloj" id="reloj">00:00:00</div>
+        <div class="refrescar" id="boton-refrescar">Refrescar</div>
+    </div>
+
+    <div id="contenedor"></div>
+    <div id="totales-celular" class="totales-celular"></div>
+
+    <script src="{% static 'gestion/js/api.js' %}"></script>
+    <script src="{% static 'gestion/js/cocina.js' %}"></script>
+
+</body>
+</html>

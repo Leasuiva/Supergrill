@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Archivo Histórico - Supergrill</title>
+    <link rel="icon" href="{% static 'gestion/logo.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'gestion/css/style.css' %}?v=5">
+</head>
+<body>
+        <div class="contenedor-historial">
+
+            <nav class="navbar" style="flex-direction: column; align-items: flex-start; gap: 12px; padding: 15px 20px;">
+            <h2 style="color: rgb(255, 255, 255); margin: 0; display: flex; align-items: center; gap: 10px;">
+                Archivo de pedidos historicos
+            </h2> 
+
+                <!-- Contenedor de botones ordenados -->
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; width: 100%; align-items: center;">
+                    
+                    <!-- Botón Inicio-->
+                    <a href="{% url 'carga_pedidos' %}" class="dropbtn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">Inicio</a>
+                    <!-- Botón Pedidos -->   
+                    <a href="{% url 'pedidos_cargados' %}" class="dropbtn" style="text-decoration: none; display: inline-block;">Ver cargados</a>
+                </div>
+            </nav> 
+
+            <div class="barra-busqueda-pro">
+                <div class="seccion-texto">
+                    <input type="text" id="filtroTextoArchivados" placeholder="🔍 Buscar nombre, dirección, menú...">
+                </div>
+                
+                <div class="seccion-fechas">
+                    <div class="item-fecha">
+                        <label for="fechaDesde">Desde:</label>
+                        <input type="date" id="fechaDesde">
+                    </div>
+                    <div class="item-fecha">
+                        <label for="fechaHasta">Hasta:</label>
+                        <input type="date" id="fechaHasta">
+                    </div>
+                    <button onclick="buscarPorRango()" class="btn-cargar-pro">
+                        📅 Cargar
+                    </button>
+                    <!-- Botón exportar datos excel -->  
+                    <button id="btnExportarArchivados" onclick="exportarExcelArchivados()" style="display: none;" class="btn-exportar-pro">
+                    📊 Exportar datos
+                    </button>
+
+                </div>
+
+
+            </div>
+
+            <div class="tabla-scroll">
+                <table class="sheet" id="tablaArchivados">
+                    <thead>
+                        <tr>
+                            <th style="width: 22%;">Dirección / Empresa</th>
+                            <th style="width: auto;">Pedido</th>
+                            <th style="width: 10%;">Cadete</th>
+                            <th style="width: 10%;">Pago</th>
+                            <th style="width: 10%;">Estado</th>
+                            <th style="width: 12%;">Fecha Pedido</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpoArchivados">
+                        <tr>
+                            <td colspan="6" style="text-align:center; color:#999; padding:40px;">
+                                Use el buscador superior para cargar un día archivado.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    <div id="modalCantidades" class="modal">
+        <div class="modal-contenido">
+            <span class="cerrar" onclick="cerrarModalCantidades()">&times;</span>
+            
+            <h3 style="text-align:center; margin-top:0; color:#333;">📊 Historial de pedido</h3>
+
+            <div id="contenedorTotalesUnificados" class="contenedor-flex-tipos">
+                <p style="width:100%; text-align:center; padding:20px; color:#666;">Cargando...</p>
+            </div>
+            
+            <div class="botones-pedido" style="display: flex; justify-content: center; margin-top: 20px;">
+                <button type="button" onclick="cerrarModalCantidades()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <template id="tpl-fila-archivados">
+        <tr>
+            <td class="celda-direccion borde-grupo" style="vertical-align: middle;">
+                <div class="contenedor-direccion" style="flex-direction: column; align-items: flex-start; gap: 8px;">
+                    <div class="titulo-direccion"></div>
+                    <button class="btn-ver-cantidades-min">📊 Ver cantidades</button>
+                </div>
+            </td>
+            <td class="celda-pedido"></td>
+            <td class="celda-cadete"></td>
+            <td class="texto-centro celda-pago"></td>
+            <td class="texto-centro borde-izquierdo-estado celda-estado"></td>
+            <td class="celda-fecha" style="font-weight: bold; color: #1a73e8; text-align: center;"></td>
+        </tr>
+    </template>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <script src="{% static 'gestion/js/api.js' %}"></script>
+    <script src="{% static 'gestion/js/archivados.js' %}"></script>
+    <script src="{% static 'gestion/js/modales.js' %}"></script>
+    <script src="{% static 'gestion/js/totales.js' %}"></script> 
+    <script src="{% static 'gestion/js/gestor.js' %}"></script> 
+    <script src="{% static 'gestion/js/main.js' %}"></script>
+    <script src="{% static 'gestion/js/exportar.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+# Entorno virtual de Python
+env/
+venv/
+
+# Base de datos local 
+mariaDB/
+db.sqlite3
+
+# Archivos temporales de Python y Django
+__pycache__/
+*.pyc
+
+# Archivos de configuración locales que puedan tener contraseñas
+.env
+
+# Archivos basura de Windows
+Thumbs.db

@@ -1,0 +1,11 @@
+CONEXIONES PARA ENVIAR APK DESDE LA PC
+
+
+
+--- Este es para conectarse (acordarse de cambiar ip)
+& "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" connect 192.168.1.26
+
+-- Este es para instalar la apk
+& "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" install -r "$env:USERPROFILE\AndroidStudioProjects\Supergrillview\app\build\outputs\apk\debug\app-debug.apk"
+
+ "http://192.168.1.200:8000/cocina"

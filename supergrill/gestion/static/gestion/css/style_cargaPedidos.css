@@ -1,0 +1,617 @@
+/* ========================================================================== */
+/* 1. LAYOUT GENERAL Y FONDOS                                                 */
+/* ========================================================================== */
+html, body {
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    overflow: hidden; /* Bloquea el scroll global */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.formulario {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 95vw;
+    height: 92vh;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* ========================================================================== */
+/* 2. NAVBAR Y MENÚS DESPLEGABLES                                             */
+/* ========================================================================== */
+.navbar {
+    background-color: #042505;
+    padding: 10px 20px;
+    color: white;
+    display: flex;
+    align-items: center;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    width: 100%;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    background-color: #ffffff; color: #042505; border: none;
+    padding: 8px 14px; font-size: 14px; border-radius: 5px; cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.dropbtn:hover {
+    background-color: #f2f2f2;
+    transform: scale(1.05);
+}
+
+.dropdown-content {
+    display: none; position: absolute; background-color: #ffffff;
+    min-width: 200px; box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    border-radius: 5px; top: 100%; left: 0; z-index: 101; padding: 10px 0;
+}
+
+.dropdown-content.oculto { display: none; }
+.dropdown-content:not(.oculto) { display: block; }
+
+.dropdown-content button {
+    background: none; border: none; color: #042505;
+    padding: 10px 16px; text-align: left; width: 100%;
+    font-size: 14px; cursor: pointer;
+}
+
+.dropdown-content button:hover {
+    background-color: #f0f0f0;
+}
+
+/* Submenús laterales (Agregar / Editar items) */
+.submenu-container { position: relative; }
+.submenu-content {
+    display: none; position: absolute; left: 100%; top: 0;
+    background-color: #ffffff; min-width: 180px;
+    box-shadow: 4px 0px 10px rgba(0,0,0,0.2);
+    border: 1px solid #ddd; border-radius: 0 5px 5px 5px; z-index: 110;
+}
+.submenu-container:hover .submenu-content { display: block !important; }
+
+/* ========================================================================== */
+/* 3. INPUTS, BOTONES Y FORMULARIOS BASE                                      */
+/* ========================================================================== */
+.campo { margin-bottom: 16px; position: relative; width: fit-content; }
+.campo label { display: block; margin-bottom: 4px; font-weight: bold; font-size: 14px; }
+.input-radio { display: flex; align-items: center; gap: 10px; }
+.fila-horizontal { display: flex; align-items: center; gap: 6px; }
+
+input[type="text"], input[type="number"], .input-con-icono input[type="text"] {
+    width: 100%; height: 30px;
+    padding: 4px 6px; box-sizing: border-box; font-size: 14px;
+    border: 1px solid #ccc; border-radius: 4px;
+}
+
+.input-con-icono { position: relative; display: inline-block; width: fit-content; }
+.input-con-icono input[type="text"] { padding-right: 25px; }
+.flecha-desplegar {
+    position: absolute; right: 6px; top: 50%;
+    transform: translateY(-50%); cursor: pointer; font-size: 14px; color: #555;
+}
+
+/* Efecto Focus (Iluminación azul) */
+input[type="text"]:focus, input[type="number"]:focus {
+    border-color: #0969da !important; outline: none;
+    box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.15) !important;
+    transition: all 0.2s ease;
+}
+
+.btn-icono {
+    background: none; border: none; font-size: 18px; padding: 0 4px;
+    margin-left: 2px; cursor: pointer; color: #333;
+}
+.btn-icono:hover { color: green; }
+
+.botones-pedido { display: flex; gap: 10px; margin-top: 10px; }
+.botones-pedido button {
+    padding: 6px 12px; font-size: 14px; cursor: pointer;
+    border: none; background-color: #042505; color: white;
+    border-radius: 4px; transition: background-color 0.3s ease;
+}
+.botones-pedido button:hover { background-color: #45a049; }
+
+
+/* ========================================================================== */
+/* 4. BUSCADOR Y AUTOCOMPLETADO (SUGERENCIAS)                                 */
+/* ========================================================================== */
+.filtro-tabla {
+    margin-bottom: 10px; flex-shrink: 0; display: flex; align-items: center;
+}
+
+.filtro-tabla button {
+    padding: 5px 10px; background-color: #ffffff; border: none;
+    border-radius: 5px; color: white; font-size: 20px; cursor: pointer;
+    width: 20px; height: 34px; display: flex; align-items: center; justify-content: center;
+}
+.filtro-tabla button:hover { background-color: #f8f8f8; }
+
+/* Unificamos ambos buscadores para que tengan exactamente el mismo tamaño */
+#filtroCargados, #filtroPedidos {
+    width: 300px !important; 
+    padding: 6px 12px !important; 
+    font-size: 13px !important; 
+    border: 1px solid #ccc; 
+    border-radius: 4px;
+    box-sizing: border-box;
+    height: 28px; /* Para que quede perfectamente alineado con el botón de refrescar */
+}
+
+#btnRefrescarTabla {
+    padding: 5px 10px; background-color: #ffffff; border: none;
+    border-radius: 5px; font-size: 20px; cursor: pointer; width: 34px; height: 34px;
+}
+
+.sugerencias {
+    position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 9999;
+    list-style: none; padding: 6px 0; margin: 0; background: #ffffff;
+    border: 1px solid #d0d7de; box-shadow: 0 8px 24px rgba(140, 149, 159, 0.2);
+    max-height: 200px; overflow-y: auto; font-size: 13px; border-radius: 6px;
+    display: none; color: #24292f;
+}
+.sugerencias li { padding: 8px 14px; cursor: pointer; transition: all 0.15s ease; border-bottom: 1px solid #f6f8fa; }
+.sugerencias li:last-child { border-bottom: none; }
+.sugerencias li:hover, .sugerencias li:focus {
+    background-color: #f3f6f9; color: #0969da; font-weight: 500; padding-left: 18px;
+}
+
+/* Scroll de sugerencias */
+.sugerencias::-webkit-scrollbar { width: 6px; }
+.sugerencias::-webkit-scrollbar-track { background: transparent; }
+.sugerencias::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
+
+/* ========================================================================== */
+/* 5. TABLA PRINCIPAL DE PEDIDOS                                              */
+/* ========================================================================== */
+.tabla-scroll {
+    flex: 1; overflow-y: scroll; overflow-x: hidden !important; width: 100%;
+    margin-top: 15px; background: white; border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: 1px solid #d0d0d0;
+}
+
+table.sheet {
+    width: 100%; table-layout: fixed; border-collapse: separate; border-spacing: 0; margin: 0;
+}
+
+table.sheet th {
+    background-color: #042505; color: white; font-size: 11px; text-transform: uppercase;
+    font-weight: 600; padding: 6px 4px; position: sticky; top: 0; z-index: 20;
+    border-bottom: 3px solid #021a03;
+}
+
+table.sheet td {
+    padding: 1px 4px; font-size: 12px; color: #333; vertical-align: middle;
+    word-wrap: break-word; border-bottom: 1px solid #eaeff2; height: 22px;
+}
+
+/* Anchos de columnas fijos */
+#tablaPedidos th:nth-child(1), #tablaPedidos td:nth-child(1) { width: 22% !important; }
+#tablaPedidos th:nth-child(2), #tablaPedidos td:nth-child(2) { width: auto !important; }
+#tablaPedidos th:nth-child(3), #tablaPedidos td:nth-child(3) { width: 10% !important; }
+#tablaPedidos th:nth-child(4), #tablaPedidos td:nth-child(4) { width: 12% !important; }
+#tablaPedidos th:nth-child(5), #tablaPedidos td:nth-child(5) { width: 12% !important; }
+
+/* Estructura inyectada por JS (Celdas) */
+.celda-direccion {
+    background-color: #fff; vertical-align: top !important;
+    border-right: 2px solid #d0d0d0 !important; font-weight: 700; color: #222;
+}
+.contenedor-direccion {
+    display: flex; justify-content: space-between; align-items: center;
+    min-height: 28px; padding: 4px 6px; transition: background-color 0.15s ease;
+}
+.celda-cadete {
+    text-align: center; border-left: 2px solid #d0d0d0 !important;
+    border-right: 2px solid #d0d0d0 !important; font-weight: 700; color: #555;
+}
+
+/* El Pedido en sí */
+.item-pedido-container {
+    display: flex; justify-content: space-between; align-items: center;
+    width: 100%; padding: 2px 6px !important; border-radius: 8px !important; 
+    margin: 1px 0; min-height: 24px; border-bottom: 1px dashed #ccc; box-sizing: border-box;
+}
+.item-pedido-container:last-child { border-bottom: none; }
+.texto-pedido { flex: 1; margin-right: 15px; font-size: 13px; font-weight: 500; display: block; }
+
+/* Bordes lógicos JS */
+.borde-interno { border-bottom: 1px solid #ccc !important; }
+.borde-grupo { border-bottom: 2px solid #444 !important; }
+
+/* ========================================================================== */
+/* 6. BADGES, ESTADOS Y HOVERS DE TABLA                                       */
+/* ========================================================================== */
+.texto-centro { text-align: center; position: relative !important; }
+
+.contenedor-badge-centro {
+    display: flex !important; align-items: center; justify-content: center; gap: 8px;
+    width: 100% !important; margin: 0 auto; height: 22px !important;
+    padding: 0 6px !important; border-radius: 8px; transition: background-color 0.1s ease;
+}
+
+.badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 70px; height: 16px !important; border-radius: 3px;
+    font-size: 9px !important; font-weight: 700; text-transform: uppercase; margin: 0;
+}
+.badge-pendiente { background-color: #fcb2b2; color: #422b2b; border: 1px solid #fcb2b2; } 
+.badge-pagado    { background-color: #9af1ae; color: #155724; border: 1px solid #c3e6cb; } 
+.badge-efectivo  { background-color: #b9f0ed; color: #00695c; border: 1px solid #bee5eb; } 
+.badge-mp        { background-color: #cce5ff; color: #004085; border: 1px solid #b8daff; } 
+.badge-neutro    { background-color: #f8f9fa; color: #adb5bd; width: 30px; } 
+
+.fila-nueva { background-color: #d4edda !important; transition: background 1s; }
+
+/* Interacciones Hover */
+.acciones-grupo, .acciones-item {
+    display: flex; gap: 10px; opacity: 0; align-items: center;
+    transition: opacity 0.2s ease-in-out;
+}
+.contenedor-direccion:hover .acciones-grupo, 
+.item-pedido-container:hover .acciones-item { opacity: 1 !important; }
+
+.acciones-grupo button, .acciones-item button {
+    background: none; border: none; cursor: pointer; padding: 0;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.acciones-grupo button { font-size: 18px !important; }
+.acciones-item button { font-size: 13px !important; }
+
+.btn-tilde, .btn-tilde-item { color: #28a745; }
+.btn-borrar, .btn-borrar-item { color: #dc3545; }
+.btn-editar { color: #007bff; }
+.acciones-grupo button:hover, .acciones-item button:hover { transform: scale(1.3) !important; z-index: 10; }
+
+/* Hover Grupal (El bloque gris) */
+#tablaPedidos tbody tr.hover-grupo-activo td, tr.grupo-fondo-gris td { background-color: #e2e2e2 !important; }
+
+/* Lápiz flotante (Estados) */
+.btn-editar-celda {
+    background: none; border: none; cursor: pointer; color: #007bff; padding: 0;
+    position: absolute; right: 4px !important; top: 50% !important;
+    transform: translateY(-50%) !important; opacity: 0; font-size: 14px !important; transition: all 0.2s ease;
+}
+td.texto-centro:hover .btn-editar-celda { opacity: 1 !important; }
+.btn-editar-celda:hover { transform: translateY(-50%) scale(1.3) !important; }
+
+/* ========================================================================== */
+/* 7. MODALES GENERALES                                                       */
+/* ========================================================================== */
+.modal {
+    display: none; position: fixed; z-index: 100; left: 0; top: 0;
+    width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.4);
+}
+.modal-contenido {
+    background-color: #fff; margin: 5% auto; padding: 20px; border-radius: 8px; width: 300px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; gap: 10px; position: relative;
+}
+.cerrar {
+    color: #aaa; position: absolute; top: 15px; right: 20px;
+    font-size: 28px; font-weight: bold; cursor: pointer; z-index: 101; line-height: 1;
+}
+.cerrar:hover { color: #000; }
+
+/* 👇 AGREGAMOS LA JERARQUÍA DE CAPAS AQUÍ 👇 */
+#modalNuevoPedido {
+    z-index: 110 !important; /* El modal grande se queda abajo */
+}
+
+/* Modales chicos (Agregar Items) - ¡LOS FORZAMOS A IR ARRIBA DE TODO! */
+#modalTipoMenu, #modalGuarnicion, #modalCadete, #modalFormaPago, #modalGestorItems {
+    z-index: 9999 !important; 
+}
+/* 👆 FIN DE LA CORRECCIÓN 👆 */
+
+#modalTipoMenu h3, #modalGuarnicion h3, #modalCadete h3, #modalFormaPago h3 {
+    text-align: center; width: 100%; margin-bottom: 25px; font-size: 22px; font-weight: bold;
+}
+#modalTipoMenu .campo, #modalGuarnicion .campo, #modalCadete .campo, #modalFormaPago .campo {
+    display: flex; flex-direction: column; align-items: center; width: 100%; margin: 15px auto;
+}
+#modalTipoMenu input, #modalGuarnicion input, #modalCadete input, #modalFormaPago input {
+    width: 100%; max-width: 260px; margin-top: 5px;
+}
+#modalTipoMenu .sugerencias, #modalGuarnicion .sugerencias, #modalCadete .sugerencias, #modalFormaPago .sugerencias {
+    width: 100%; max-width: 260px; left: 50%; transform: translateX(-50%); top: 100%;
+}
+.modal-contenido button[onclick^="guardar"] {
+    background-color: #4a504b; color: white; padding: 6px; border: none; border-radius: 4px;
+    transition: all 0.2s ease; cursor: pointer;
+}
+.modal-contenido button[onclick^="guardar"]:hover { transform: translateY(-2px); background-color: #218838; }
+
+/* ========================================================================== */
+/* 8. MODAL NUEVO / EDITAR PEDIDO (GRILLA)                                    */
+/* ========================================================================== */
+.modal-contenido.grande {
+    width: 1350px; margin: 30px auto; padding: 20px 30px;
+    overflow: visible !important; height: auto !important; max-height: none !important;
+    padding-bottom: 50px;
+}
+
+/* --- NUEVOS ANCHOS DE LA GRILLA (ORDEN CORREGIDO) --- */
+/* 1 a 4: Nombre, Tipo, Menú, Guarnición */
+.fila-pedido .campo:nth-child(1), .fila-pedido .campo:nth-child(2),
+.fila-pedido .campo:nth-child(3), .fila-pedido .campo:nth-child(4) { 
+    flex: 0 0 140px !important; min-width: 140px; 
+}
+
+/* 5. Cantidad (Pequeño y centrado) */
+.fila-pedido .campo:nth-child(5) { 
+    flex: 0 0 70px !important; min-width: 70px; 
+}
+
+/* 6. Descripción (El más ancho de todos) */
+.fila-pedido .campo:nth-child(6) { 
+    flex: 0 0 250px !important; 
+    min-width: 250px; 
+}
+
+/* 7 y 8. Forma de Pago y Estado */
+.fila-pedido .campo:nth-child(7), .fila-pedido .campo:nth-child(8) { 
+    flex: 0 0 140px !important; min-width: 140px; 
+}
+
+/* 9. Botón X (Eliminar fila) */
+.fila-pedido .campo:nth-child(9) { 
+    flex: 0 0 40px !important; min-width: 40px; 
+} 
+
+/* Estilos de los inputs internos */
+.fila-pedido input[type="text"], .fila-pedido input[type="number"], .fila-pedido select {
+    width: 100% !important; height: 30px !important; line-height: 30px;
+}
+
+/* Centrar el texto dentro del input de Cantidad (que ahora es el hijo 5) */
+.fila-pedido .campo:nth-child(5) input { 
+    text-align: center; padding: 0 !important; 
+}
+
+
+/* --- BOTÓN X (ELIMINAR FILA) --- */
+.btn-icono.externo {
+    width: 100%; height: 30px; background-color: #ffffff; color: #d32f2f;
+    border: 1px solid #ffcdd2; border-radius: 4px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 18px; font-weight: bold;
+}
+.btn-icono.externo:hover { background-color: #d32f2f; color: white; }
+
+/* --- MENÚ DESPLEGABLE DE "AGREGAR ÍTEM" --- */
+#menuAgregarItems {
+    position: absolute; bottom: 100%; left: 0; min-width: 170px; background-color: #ffffff;
+    box-shadow: 0px -5px 15px rgba(0,0,0,0.2); border: 1px solid #ddd; border-radius: 5px;
+    z-index: 2000; margin-bottom: 5px;
+}
+#menuAgregarItems.oculto { display: none; }
+
+/* Botones internos del menú desplegable */
+#menuAgregarItems button {
+    width: 100%; text-align: left; padding: 10px 15px; background: none; border: none;
+    font-size: 14px; border-bottom: 1px solid #f0f0f0; color: #333; /* Forzamos color oscuro */
+}
+#menuAgregarItems button:hover { background-color: #e2e8f0; color: #042505; }
+
+/* ========================================================================== */
+/* 9. MODAL CANTIDADES (TETRIS)                                               */
+/* ========================================================================== */
+#modalCantidades .modal-contenido {
+    background-color: #f7fafd; border-radius: 10px; width: 850px; max-width: 95%;
+    height: auto; max-height: 92vh; padding: 0; margin: 0 !important;
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); overflow: hidden !important;
+}
+
+#modalCantidades h3 { margin: 0; padding: 12px; text-align: center; background: #fff; border-bottom: 1px solid #e0e0e0; }
+#contenedorEscalable { flex: 1; overflow-y: auto; padding: 15px; }
+#contenedorTotalesUnificados { column-count: 2; column-gap: 15px; padding-bottom: 20px; }
+
+.bloque-tipo-menu {
+    background: #fff; border-radius: 6px; border: 1px solid #e0e0e0;
+    break-inside: avoid; display: inline-block; width: 100%; margin-bottom: 15px;
+}
+.bloque-tipo-menu h5 {
+    background-color: #3d3c3c; color: #fffdfd; margin: 0; padding: 6px 10px; font-size: 0.7rem; text-transform: uppercase;
+}
+.lista-totales { list-style: none; padding: 0; margin: 0; }
+.lista-totales li { display: flex; justify-content: space-between; padding: 6px 12px; font-size: 0.85rem; border-bottom: 1px solid #e6e6e6; }
+.lista-totales li:nth-child(odd) { background-color: #ffffff; }
+.lista-totales li:nth-child(even) { background-color: #f2f4f6; }
+
+.badge-conteo { background-color: #28a745; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem; }
+.modal-footer-custom { padding: 10px 20px; background-color: #fff; border-top: 1px solid #ddd; }
+.barra-total-negra { background-color: #212529; color: #fff; text-align: center; padding: 8px; border-radius: 4px; font-weight: 700; }
+.btn-actualizar { background-color: #28a745; color: white; padding: 8px 25px; border: none; border-radius: 4px; cursor: pointer; }
+
+/* Responsive notebook */
+@media (max-width: 1400px), (max-height: 850px) {
+    #modalCantidades .modal-contenido { width: 980px !important; }
+    #contenedorTotalesUnificados { column-count: 3 !important; }
+}
+
+/* ========================================================================== */
+/* MODAL LISTA DE CADETES Y EDICIÓN RÁPIDA                                    */
+/* ========================================================================== */
+#modalListaCadetes .modal-contenido {
+    background-color: #f7fafd; 
+    border-radius: 10px; 
+    width: 850px; 
+    max-width: 95%;
+    height: auto; 
+    max-height: 92vh; 
+    padding: 0; 
+    margin: 0 !important;
+    position: fixed; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+    overflow: hidden !important;
+}
+
+#modalListaCadetes h3 { 
+    margin: 0; 
+    padding: 12px; 
+    text-align: center; 
+    background: #fff; 
+    border-bottom: 1px solid #e0e0e0; 
+}
+
+@media (max-width: 1400px), (max-height: 850px) {
+    #modalListaCadetes .modal-contenido { width: 980px !important; }
+}
+
+/* Efecto Excel para inputs de rendición */
+.input-rendicion, .input-rendicion-texto {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid transparent; 
+    background-color: transparent; 
+    font-size: 13px;
+    padding: 6px 4px;
+    color: #333;
+}
+.input-rendicion { text-align: center; }
+.input-rendicion-texto { text-align: left; }
+
+.input-rendicion:focus, .input-rendicion-texto:focus {
+    border: 2px solid #28a745 !important; 
+    background-color: #fff;
+    outline: none;
+    border-radius: 2px;
+}
+.input-rendicion::-webkit-outer-spin-button,
+.input-rendicion::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Efecto hover en cabeceras de días */
+th.dia-clickeable {
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+th.dia-clickeable:hover {
+    background-color: #28a745 !important;
+    color: white !important;
+}
+
+/* ========================================================================== */
+/* BLOQUEO VISUAL PARA INPUTS DE RENDICIÓN (SOLO LECTURA)                     */
+/* ========================================================================== */
+.input-rendicion[readonly], .input-rendicion-texto[readonly] {
+    cursor: default;
+}
+
+.input-rendicion[readonly]:focus, .input-rendicion-texto[readonly]:focus {
+    border: 1px solid transparent !important;
+    background-color: transparent !important;
+    outline: none;
+}
+/* ========================================================================== */
+/* 10. MODAL GESTOR DE ÍTEMS                                                  */
+/* ========================================================================== */
+.lista-gestor { list-style: none; padding: 0; margin: 0; max-height: 350px; overflow-y: auto; border: 1px solid #ddd; }
+.lista-gestor li { display: flex; justify-content: space-between; padding: 10px 12px; border-bottom: 1px solid #eee; transition: 0.2s; }
+.lista-gestor li:hover { background-color: #f0f4f8; }
+.item-nombre { flex: 1; font-size: 14px; font-weight: 500; }
+.item-acciones button { background: none; border: none; cursor: pointer; padding: 6px; background-color: #f1f1f1; border-radius: 4px; }
+.item-acciones button:hover { transform: scale(1.1); }
+.btn-editar-gestor:hover { background-color: #e3f2fd !important; }
+.btn-ocultar-gestor:hover, .btn-borrar-gestor:hover { background-color: #ffebee !important; color: #d32f2f !important; }
+
+.item-oculto { background-color: #f9f9f9 !important; }
+.item-oculto .item-nombre { text-decoration: line-through; color: #999; }
+
+
+
+/* ========================================================================== */
+/* 11. LABELS ETIQUETAS EN MODAL DE NUEVO PEDIDO                              */
+/* ========================================================================== */
+/* 1. Estilo base para los labels (Primera fila) */
+.fila-pedido label {
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    display: block; 
+    margin-bottom: 5px; 
+    font-weight: bold; 
+    font-size: 13px;
+    width: 100%; 
+    line-height: 1.2;
+    color: #333;
+}
+
+/* 2. Ocultamos etiquetas en TODAS las filas dentro del contenedor dinámico */
+#contenedorPedidos .fila-pedido label { 
+    display: none; 
+}
+
+/* 3. 🔥 LA CLAVE: Si la fila es la PRIMERA del contenedor, forzamos que se vean */
+/* Esto arregla el problema de main.js porque la primera fila siempre será el 'first-child' */
+#contenedorPedidos .fila-pedido:first-child label {
+    display: block !important;
+}
+
+/* 4. Alineación: Aseguramos que los inputs queden siempre "pegados" abajo */
+/* Esto evita que las filas sin labels se vean desalineadas con la primera */
+.fila-pedido {
+    display: flex;
+    width: 100%;
+    align-items: flex-end !important;
+    gap: 5px;
+    flex-wrap: nowrap !important;
+}
+
+/* ========================================================================== */
+/* 12.   --- ESTILO PARA TEXTO EDITADO (BADGE AZUL) ---                       */
+/* ========================================================================== */
+.fila-editada, 
+.fila-editada td {
+    background-color: transparent !important; /* Anula el fondo azul de la fila entera */
+    transition: background-color 0.3s;
+}
+
+.texto-editado-resaltado {
+    background-color: #e3f2fd;
+    color: #0d47a1;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+    display: inline-block;
+    border: 1px solid #bbdefb;
+    transition: all 0.3s ease;
+    line-height: 1.2;
+}
+
+/* ========================================================================== */
+/* 13. SEPARADOR VERTICAL (FORMA DE PAGO / ESTADO)                            */
+/* ========================================================================== */
+
+/* Aplicamos el borde gris izquierdo siempre a la última columna (Estado) */
+#tablaPedidos td:last-child,
+#tablaCargados td:last-child {
+    border-left: 2px solid #d0d0d0 !important;
+}
+
+/* Reactivamos la clase original por las dudas de que el JS la necesite */
+.borde-izquierdo-estado {
+    border-left: 2px solid #d0d0d0 !important;
+}
+

@@ -1,0 +1,296 @@
+        :root {
+            --bg-color: #0a0a0c;
+            --card-bg: #18181b;
+            --text-main: #f4f4f5;
+            --accent-green: #07b647; /* Verde más vibrante para visión a distancia */
+            --accent-blue: #0ea5e9;
+        }
+
+        html, body {
+            margin: 0; padding: 0;
+            width: 100vw; height: 100vh;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            overflow: hidden; /* PROHIBIDO EL SCROLL */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1vh 2vw; 
+            background: linear-gradient(to bottom, #111111, #050505); 
+            border-bottom: 1px solid #27272a;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+            flex-shrink: 0; height: 8vh; box-sizing: border-box;
+            position: relative;
+            z-index: 10;
+        }
+        .header h1 { 
+            margin: 0; 
+            color: #ffffff; 
+            font-size: 7.5vh; 
+            font-weight: 900; 
+            text-shadow: 0 2px 4px rgba(0,0,0,0.9), 0 0 20px rgba(255, 94, 0, 0.3); /* Resplandor sutil de parrilla */
+            letter-spacing: -1px;
+        }
+        .header .reloj { 
+            font-size: 6vh; 
+            color: var(--accent-green); 
+            font-weight: bold; 
+            font-family: 'Courier New', Courier, monospace; /* Fuente digital para el reloj */
+            text-shadow: 0 0 12px rgba(16, 230, 96, 0.4);
+        }
+
+        /* 🔥 CONTENEDOR MAESTRO DE COLUMNAS */
+        #contenedor {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: row;
+            gap: 1.5vw;
+            padding: 1.5vw;
+            box-sizing: border-box;
+            width: 100%;
+            overflow: hidden;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        /* 🔥 COLUMNA FÍSICA */
+        .columna {
+            flex: 1 1 0; 
+            display: flex;
+            flex-direction: column;
+            gap: 1.5vh; 
+            min-width: 250px;
+        }
+
+        .bloque {
+            background-color: var(--card-bg);
+            border-radius: 1.2vh;
+            border: 1px solid #27272a;
+            box-shadow: 0 1.5vh 3vh rgba(0,0,0,0.7), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            width: 100%;
+            height: fit-content;
+        }
+
+        .bloque-header {
+            background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+            color: #ffffff;
+            padding: 1.2vh 1.5vh; 
+            font-size: 1.2rem;
+            font-weight: 900; 
+            text-transform: uppercase;
+            text-align: center; 
+            border-bottom: 2px dashed #3f3f46; /* Efecto ticket de cocina */
+            border-top: 4px solid #0ea5e9; /* Acento naranja Supergrill */
+            letter-spacing: 1px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            z-index: 1;
+        }
+        .bloque-header.guarnicion { 
+            background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+            border-top: 4px solid var(--accent-blue);
+        }
+
+        .lista { list-style: none; margin: 0; padding: 0; }
+        .lista li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2vh 1.5vh;
+            border-bottom: 1px dashed #27272a;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #e4e4e7;
+            line-height: 1.2;
+        }
+        .lista li:nth-child(even) { background-color: rgba(255, 255, 255, 0.02); }
+        .lista li:last-child { border-bottom: none; }
+
+        .badge {
+            background-color: var(--accent-green); 
+            color: #000;
+            padding: 0.3vh 1.2vh; 
+            border-radius: 0.6vh;
+            font-weight: 900; 
+            font-size: 1.2rem;
+            min-width: 2.2rem; 
+            text-align: center;
+            flex-shrink: 0; 
+            margin-left: 10px;
+            box-shadow: 0 0 12px rgba(16, 230, 96, 0.3);
+            border: 1px solid #0bb349;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+        }
+
+        /* DISEÑO RESPONSIVE PARA CELULARES (SCROLL LIBERADO) */
+        @media (max-width: 768px) {
+            html, body { 
+                overflow-y: auto !important; 
+                height: auto !important; 
+                display: block !important; 
+            }
+            html { font-size: 16px !important; }
+            body { padding: 0; }
+            .header { 
+                display: flex;
+                flex-direction: column; 
+                height: auto; 
+                padding: 15px;
+                gap: 5px;
+            }
+            .header h1 { font-size: 2rem !important; }
+            .header .reloj { font-size: 1.2rem !important; }
+            #contenedor { 
+                display: flex;
+                flex-direction: column; 
+                height: auto; 
+                padding: 15px;
+                gap: 15px;
+            }
+            .columna { 
+                width: 100%; 
+                min-width: 100%; 
+                gap: 15px;
+            }
+            .bloque-header {
+                font-size: 1.1rem;
+                padding: 12px;
+            }
+            .lista li {
+                font-size: 1rem;
+                padding: 12px 15px;
+            }
+            .badge {
+                font-size: 1rem;
+                padding: 4px 12px;
+            }
+        }
+
+/* ========================================================= */
+/* PANEL DE TOTALES Y BOTÓN EXCLUSIVOS PARA CELULAR          */
+/* ========================================================= */
+
+.totales-celular {
+    display: none; /* Oculto por defecto en monitores de PC y TV */
+}
+
+/* Ocultar el botón por defecto en monitores grandes */
+.header .refrescar {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    /* --- Estilos para el Panel de Totales --- */
+    .totales-celular {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(180deg, #18181b 0%, #0a0a0c 100%);
+        border: 1px solid #27272a;
+        border-top: 4px solid var(--accent-green);
+        padding: 20px;
+        margin: 0 15px 30px 15px; 
+        border-radius: 12px;
+        color: #ffffff;
+        font-size: 1.4rem;
+        font-weight: 900;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        text-transform: uppercase;
+    }
+
+    .badge-total-celu {
+        background-color: var(--accent-green);
+        color: #000;
+        padding: 5px 15px;
+        border-radius: 8px;
+        margin-left: 10px;
+        font-size: 1.8rem;
+        box-shadow: 0 0 15px rgba(16, 230, 96, 0.4);
+        border: 1px solid #0bb349;
+        display: inline-block;
+    }
+
+    .pedidos-ya-celu {
+        color: #ff3b30; /* Rojo característico de la app */
+        font-size: 1rem;
+        margin-top: 10px;
+        text-transform: none;
+        font-weight: bold;
+    }
+
+    /* --- Estilos para el botón Refrescar en Celular --- */
+    .header .refrescar {
+        display: inline-block; /* Lo mostramos solo en esta resolución */
+        background-color: var(--accent-blue); /* Usamos el azul de tu paleta */
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 1rem;
+        font-weight: bold;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        margin-top: 10px; /* Separación del reloj */
+        cursor: pointer;
+        user-select: none;
+        transition: transform 0.1s, background-color 0.2s;
+        border: 1px solid #0284c7; /* Borde sutil */
+    }
+
+    .header .refrescar:active {
+        transform: scale(0.95);
+        background-color: #0284c7; /* Azul más oscuro al presionar */
+    }
+
+/* Estilos del menú colapsable solo en celulares */
+    .bloque-header {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        cursor: pointer;
+    }
+    
+    .icono-desplegable {
+        display: inline-block;
+        transition: transform 0.3s ease;
+        font-size: 0.9em;
+        color: var(--accent-blue);
+    }
+    
+    .bloque-header.guarnicion .icono-desplegable {
+        color: var(--accent-green);
+    }
+    
+    .lista-oculta {
+        display: none !important;
+    }
+    
+    .rotado {
+        transform: rotate(180deg);
+    }
+}
+
+/* Transiciones suaves para todos los recuadros */
+.badge, .badge-total-celu {
+    transition: background-color 0.4s, transform 0.4s, box-shadow 0.4s;
+}
+
+/* Efecto visual de cambio (blanco brillante) */
+.badge-actualizado {
+    background-color: #ffffff !important; 
+    color: #000 !important;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8) !important;
+    transform: scale(1.15) !important; 
+}
+
+
+/* Oculta la flechita de acordeón en televisores/PC */
+.icono-desplegable {
+    display: none;
+}

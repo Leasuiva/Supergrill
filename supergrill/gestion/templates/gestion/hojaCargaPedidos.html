@@ -1,0 +1,800 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario de Pedidos</title>
+    <link rel="icon" href="{% static 'logo.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'gestion/css/style_cargaPedidos.css' %}?v=14">
+</head>
+<body>
+
+    {% csrf_token %}
+    <div class="formulario">
+        <nav class="navbar" style="flex-direction: column; align-items: flex-start; gap: 12px; padding: 15px 20px;">
+            <h2 style="color: rgb(255, 255, 255); margin: 0; display: flex; align-items: center; gap: 10px;">
+                Gestor de pedidos
+            </h2>        
+            <!-- Contenedor flex para agrupar y separar los botones prolijamente -->
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button id="dropbtnNuevoPedido" class="dropbtn">Nuevo pedido</button>
+
+                 <a href="{% url 'pedidos_cargados' %}" class="dropbtn" style="text-decoration: none; display: inline-block;">Ver cargados</a> 
+                <!-- <a href="{% url 'archivados' %}" class="dropbtn" style="text-decoration: none; display: inline-block;">Archivados</a> -->
+
+                <!-- Boton de cantidades -->
+                <button class="dropbtn" onclick="abrirModalCantidades()">Cantidades</button>
+
+                <!-- Linea comentada que contiene agregar items y editarlos, que no es tan usado  -->
+                 <div class="dropdown">
+                    <button id="dropbtnOpciones" class="dropbtn">Opciones</button>
+                        <div id="dropdownOpciones" class="dropdown-content oculto">
+                            
+                            <hr>
+                            <div class="submenu-container">
+                                <button class="submenu-btn">➕ Agregar item <span></span></button>
+                                <div class="submenu-content">
+                                    <button onclick="abrirModalTipoMenu()">Nuevo menú</button>
+                                    <button onclick="abrirModalGuarnicion()">Nueva guarnición</button>
+                                    <button onclick="abrirModalCadete()">Nuevo cadete</button>
+                                    <button onclick="abrirModalFormaPago()">Nueva forma de pago</button>
+                                </div>
+                            </div>
+                            <div class="submenu-container">
+                                <button class="submenu-btn">✏️ Editar items <span></span></button>
+                                <div class="submenu-content">
+                                    <button onclick="abrirModalGestorItems('tipo_menu')">Editar tipo de menú</button>
+                                    <button onclick="abrirModalGestorItems('menus')">Editar menú</button>
+                                    <button onclick="abrirModalGestorItems('guarniciones')">Editar guarniciones</button>
+                                    <button onclick="abrirModalGestorItems('cadetes')">Editar cadetes</button>
+                                    <button onclick="abrirModalGestorItems('forma_pago')">Editar formas de pago</button>
+                                </div>
+                            </div>
+                            <div class="submenu-container">
+                            <button
+                                class="submenu-btn"
+                                onclick="window.location.href=`{% url 'archivados' %}`">
+                                📁 Archivados
+                            </button>
+                            </div>
+
+                            <div class="submenu-container">
+                                <button class="submenu-btn" onclick="abrirModalListaCadetes()">
+                                    🛵 Cadetes
+                                </button>
+                            </div>
+                        
+                        </div>
+                </div> 
+            </div>
+        </nav>
+
+        <div class="filtro-tabla">
+            <input type="text" id="filtroPedidos" placeholder="🔍 Buscar..." style="padding: 5px 10px; font-size: 13px; width: 300px;">
+            <button id="btnRefrescarTabla" class="btn-icon" title="Actualizar" style="cursor:pointer;">🔄</button>
+        </div>
+
+        <div class="tabla-scroll">
+            <table class="sheet" id="tablaPedidos">
+                    <thead>
+                        <tr>
+                            <th style="width: 22%;">Dirección / Empresa</th>
+                            <th style="width: auto;">Pedido</th>
+                            <th style="width: 10%;">Cadete</th>
+                            <th style="width: 12%;">Forma de Pago</th>
+                            <th style="width: 12%;">Estado</th>
+                        </tr>
+                    </thead>
+                <tbody>
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    
+
+<div id="modalTipoMenu" class="modal">
+            <div class="modal-contenido">
+                <span class="cerrar" onclick="cerrarModalTipoMenu()">&times;</span>
+                <h3>Agregar tipo de menú y menú</h3>
+
+                <div class="campo" style="width: 100%; margin-bottom: 10px;">
+                    <label for="modal_tipo_menu">Tipo de menú:</label>
+                    <input type="text" id="modal_tipo_menu" autocomplete="off">
+                    <ul id="sug_modal_tipo_menu" class="sugerencias"></ul>
+                </div>
+
+                <div class="campo" style="width: 100%;">
+                    <label for="modal_nombre_menu">Nombre del menú:</label>
+                    <input type="text" id="modal_nombre_menu" autocomplete="off">
+                    <ul id="sug_modal_nombre_menu" class="sugerencias"></ul>
+                </div>
+
+                <button onclick="guardarTipoYMenu()">Guardar</button>
+            </div>
+        </div>
+
+    <div id="modalGuarnicion" class="modal">
+                <div class="modal-contenido">
+                    <span class="cerrar" onclick="cerrarModalGuarnicion()">&times;</span>
+                    <h3>Agregar guarnición</h3>
+                    <div class="campo" style="width: 100%;">
+                        <label for="modal_guarnicion">Nombre de la guarnición:</label>
+                        <input type="text" id="modal_guarnicion" autocomplete="off">
+                        <ul id="sug_modal_guarnicion" class="sugerencias"></ul>
+                    </div>
+                    <button onclick="guardarGuarnicion()">Guardar</button>
+                </div>
+            </div>
+
+    <div id="modalFormaPago" class="modal">
+                <div class="modal-contenido">
+                    <span class="cerrar" onclick="cerrarModalFormaPago()">&times;</span>
+                    <h3>Agregar forma de pago</h3>
+                    <div class="campo" style="width: 100%;">
+                        <label for="modal_forma_pago">Forma de pago:</label>
+                        <input type="text" id="modal_forma_pago" autocomplete="off">
+                        <ul id="sug_modal_forma_pago" class="sugerencias"></ul>
+                    </div>
+                    <button onclick="guardarFormaPago()">Guardar</button>
+                </div>
+            </div>
+
+    <div id="modalCadete" class="modal">
+                <div class="modal-contenido">
+                    <span class="cerrar" onclick="cerrarModalCadete()">&times;</span>
+                    <h3>Agregar cadete</h3>
+                    <div class="campo" style="width: 100%;">
+                        <label for="modal_cadete">Nombre del cadete:</label>
+                        <input type="text" id="modal_cadete" autocomplete="off">
+                        <ul id="sug_modal_cadete" class="sugerencias"></ul>
+                    </div>
+                    <button onclick="guardarCadete()">Guardar</button>
+                </div>
+            </div>
+
+    <div id="modalNuevoPedido" class="modal">
+        <div class="modal-contenido grande">
+            <span class="cerrar" onclick="cerrarModalNuevoPedido()">&times;</span>
+            
+            <h3 id="tituloModalPedido">Nuevo pedido</h3>
+            
+            <input type="hidden" id="ids_grupo_originales">
+
+            <div class="formulario_modal">
+
+            
+        <div class="campo">
+                    <label for="direccion">Dirección:</label>
+                    <div class="input-radio" style="display: flex; align-items: center; gap: 5px;">
+                        <input type="text" id="direccion" name="direccion" autocomplete="off" style="width: 250px;" placeholder="Calle y altura...">
+                        
+                        <input type="radio" id="radio_dir" name="tipo" value="direccion" onchange="activarCampo('direccion')" checked>
+
+                        <label for="piso" style="margin: 0 0 0 5px; font-size: 13px; color: #333;">Piso:</label>
+                        <input type="text" id="piso" style="width: 35px; padding: 5px; text-align: center; font-size: 12px;">
+                        
+                        <label for="depto" style="margin: 0 0 0 5px; font-size: 13px; color: #333;">Dpto:</label>
+                        <input type="text" id="depto" style="width: 35px; padding: 5px; text-align: center; font-size: 12px;">
+
+                        <label for="timbre" style="margin: 0 0 0 5px; font-size: 13px; color: #333;">Timbre:</label>
+                        <input type="text" id="timbre" style="width: 35px; padding: 5px; text-align: center; font-size: 12px;">
+                    </div>
+                    <ul id="sugerencias_direccion" class="sugerencias"></ul>
+                </div>
+
+                <div class="campo">
+                    <label for="empresa">Empresa:</label>
+                    <div class="input-radio" style="display: flex; align-items: center; gap: 5px;">
+                        <input type="text" id="empresa" name="empresa" disabled autocomplete="off" style="width: 250px;" placeholder="Nombre de la empresa">
+                        <input type="radio" id="radio_emp" name="tipo" value="empresa" onchange="activarCampo('empresa')">
+                    </div>
+                    <ul id="sugerencias_empresa" class="sugerencias"></ul>
+                </div>
+
+                <div class="campo">
+                    <div class="input-radio" style="display: flex; align-items: center; gap: 20px;">
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <label for="radio_retira" style="margin: 0; font-weight: bold; cursor: pointer;">Retira</label>
+                            <input type="radio" id="radio_retira" name="tipo" value="retira" onchange="activarCampo('retira')">
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <label for="radio_pedidosya" style="margin: 0; font-weight: bold; cursor: pointer; color: #ea044e;">PedidosYa</label>
+                            <input type="radio" id="radio_pedidosya" name="tipo" value="pedidosya" onchange="activarCampo('pedidosya')">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fila-dos fila-pedido">
+                    <div class="campo">
+                        <label for="nombre_base">Nombre:</label>
+                        <div class="input-radio">
+                            <input type="text" id="nombre_base" class="nombre" name="nombre" autocomplete="off" placeholder="Nombre cliente">
+                        </div>
+                        <ul class="sugerencias sugerencias-nombre"></ul>
+                    </div>
+
+                    <div class="campo">
+                        <label for="tipo_menu_base">Tipo de menú:</label>
+                        <div class="fila-horizontal">
+                            <div class="input-con-icono">
+                                <input type="text" id="tipo_menu_base" class="tipo_menu" name="tipo_menu" autocomplete="off" readonly placeholder="Seleccionar...">
+                                <span class="flecha-desplegar">▼</span>
+                            </div>
+                            </div>
+                        <ul class="sugerencias sugerencias-tipo_menu"></ul>
+                    </div>
+
+                    <div class="campo">
+                        <label for="menu_base">Menú:</label>
+                        <div class="input-con-icono">
+                            <input type="text" id="menu_base" class="menu" name="menu" autocomplete="off" readonly placeholder="Seleccionar...">
+                            <span class="flecha-desplegar">▼</span>
+                        </div>
+                        <ul class="sugerencias sugerencias-menu"></ul>
+                    </div>
+
+                    <div class="campo">
+                        <label for="guarnicion_base">Guarnición:</label>
+                        <div class="fila-horizontal">
+                            <div class="input-con-icono">
+                                <input type="text" id="guarnicion_base" class="guarnicion" name="guarnicion" autocomplete="off" readonly placeholder="Seleccionar...">
+                                <span class="flecha-desplegar">▼</span>
+                            </div>
+                            </div>
+                        <ul class="sugerencias sugerencias-guarnicion"></ul>
+                    </div>
+
+                    <div class="campo">
+                        <label for="cantidad_base">Cantidad:</label>
+                        <div class="contador">
+                            <input type="number" id="cantidad_base" class="cantidad" name="cantidad" value="1" min="1">
+                        </div>
+                    </div>
+
+                    <div class="campo">
+                        <label for="descripcion_base">Descripción:</label>
+                        <div class="input-radio">
+                            <input type="text" id="descripcion_base" class="descripcion" name="descripcion" autocomplete="off" placeholder="Detalles extra...">
+                        </div>
+                        <ul class="sugerencias sugerencias-descripcion"></ul>
+                    </div>
+
+                    <div class="campo">
+                        <label for="forma_pago_base">Forma de pago:</label>
+                        <div class="fila-horizontal">
+                            <div class="input-con-icono">
+                                <input type="text" id="forma_pago_base" class="forma_pago" name="forma_pago" autocomplete="off" readonly placeholder="Seleccionar...">
+                                <span class="flecha-desplegar">▼</span>
+                            </div>
+                            </div>
+                        <ul class="sugerencias sugerencias-forma_pago"></ul>
+                    </div>
+
+                    <div class="campo">
+                        <label for="estado_base">Estado:</label>
+                        <div class="input-con-icono">
+                            <input type="text" id="estado_base" class="estado" name="estado" autocomplete="off" readonly placeholder="Seleccionar...">
+                            <span class="flecha-desplegar">▼</span>
+                        </div>
+                        <ul class="sugerencias sugerencias-estado"></ul>
+                    </div>
+                </div>
+
+                <div id="contenedorPedidos" class="contenedor-pedidos"></div>
+
+                <div class="campo">
+                    <label for="cadete">Cadete:</label>
+                    <div class="fila-horizontal">
+                        <div class="input-con-icono">
+                            <input type="text" id="cadete" name="cadete" autocomplete="off" readonly placeholder="Seleccionar...">
+                            <span class="flecha-desplegar">▼</span>
+                        </div>
+
+                            <div style="display: flex; align-items: center; gap: 5px;" title="Marcar para que aparezca precargado al iniciar el día">
+                                <input type="checkbox" id="chkFrecuente" style="width: 18px; height: 18px; cursor: pointer; accent-color: #28a745;">
+                                <label for="chkFrecuente" style="cursor: pointer; font-weight: bold; color: #333; margin: 0; white-space: nowrap;">Cliente frecuente</label>
+                            </div>
+                        </div>
+                    <ul id="sugerencias_cadete" class="sugerencias"></ul>
+                </div>
+
+        <div class="botones-pedido">
+                    <button type="submit" id="btnCargarPedido">Cargar pedido</button>
+                    <button type="button" id="btnAgregarPedido">Agregar pedido</button>
+
+                    <div id="contenedorAgregarItem" style="position: relative; display: inline-block;">
+                        <button type="button" id="btnMenuAgregar">➕ Agregar ítem</button>
+                        
+                        <div id="menuAgregarItems" class="oculto">
+                            <button type="button" onclick="abrirModalTipoMenu()">📁 Menú / Tipo</button>
+                            <button type="button" onclick="abrirModalCadete()">🛵 Cadete</button>
+                            <button type="button" onclick="abrirModalGuarnicion()">🥗 Guarnición</button>
+                            <button type="button" onclick="abrirModalFormaPago()">💳 Forma de Pago</button>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <div id="modalEditarPedido" class="modal">
+        <div class="modal-contenido grande">
+            <span class="cerrar" onclick="cerrarModalEditar()">&times;</span>
+            
+            <h3>✏️ Editar Pedido</h3>
+            <br>
+            <input type="hidden" id="edit_id_pedido">
+
+            <div class="formulario_modal">
+
+                <div class="campo">
+                <label for="edit_direccion">Dirección:</label>
+                <div class="input-radio" style="display: flex; align-items: center; gap: 5px;">
+                    <input type="text" id="edit_direccion" name="direccion" autocomplete="off" style="width: 250px;" placeholder="Calle y altura">
+                    
+                    <input type="radio" id="radio_edit_dir" name="edit_tipo_origen" value="direccion" onclick="activarCampoEdicion('direccion')">
+
+                    <label for="edit_piso" style="margin: 0 0 0 5px; font-size: 13px; color: #333;">Piso:</label>
+                    <input type="text" id="edit_piso" style="width: 35px; padding: 5px; text-align: center; font-size: 12px;">
+
+                    <label for="edit_depto" style="margin: 0 0 0 5px; font-size: 13px; color: #333;">Dpto:</label>
+                    <input type="text" id="edit_depto" style="width: 35px; padding: 5px; text-align: center; font-size: 12px;">
+
+                    <label for="edit_timbre" style="margin: 0 0 0 5px; font-size: 13px; color: #333;">Timbre:</label>
+                    <input type="text" id="edit_timbre" style="width: 35px; padding: 5px; text-align: center; font-size: 12px;">
+                </div>
+                <ul id="sug_edit_direccion" class="sugerencias"></ul>
+            </div>
+
+            <div class="campo">
+                <label for="edit_empresa">Empresa:</label>
+                <div class="input-radio" style="display: flex; align-items: center; gap: 5px;">
+                    <input type="text" id="edit_empresa" name="empresa" disabled autocomplete="off" style="width: 250px;" placeholder="Nombre de la empresa">
+                    <input type="radio" id="radio_edit_emp" name="edit_tipo_origen" value="empresa" onclick="activarCampoEdicion('empresa')">
+                </div>
+                <ul id="sug_edit_empresa" class="sugerencias"></ul>
+            </div>
+
+            <div class="campo">
+                <div class="input-radio" style="display: flex; align-items: center; gap: 20px;">
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <label for="radio_edit_retira" style="margin: 0; font-weight: bold; cursor: pointer;">Retira</label>
+                        <input type="radio" id="radio_edit_retira" name="edit_tipo_origen" value="retira" onclick="activarCampoEdicion('retira')">
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <label for="radio_edit_pedidosya" style="margin: 0; font-weight: bold; cursor: pointer; color: #ea044e;">PedidosYa</label>
+                        <input type="radio" id="radio_edit_pedidosya" name="edit_tipo_origen" value="pedidosya" onclick="activarCampoEdicion('pedidosya')">
+                    </div>
+                </div>
+            </div>
+
+            <div class="fila-dos fila-pedido">
+                    
+                    <div class="campo">
+                        <label for="edit_nombre">Nombre:</label>
+                        <div class="input-radio">
+                            <input type="text" id="edit_nombre" name="nombre" class="nombre" autocomplete="off" placeholder="Nombre cliente">
+                        </div>
+                        <ul class="sugerencias" id="sug_edit_nombre"></ul>
+                    </div>
+
+                    <div class="campo">
+                        <label for="edit_tipo_menu">Tipo de menú:</label>
+                        <div class="fila-horizontal">
+                            <div class="input-con-icono">
+                                <input type="text" id="edit_tipo_menu" name="tipo_menu" class="tipo_menu" readonly placeholder="Seleccionar...">
+                                <span class="flecha-desplegar" onclick="mostrarTodo(this.previousElementSibling)">▼</span>
+                            </div>
+                        </div>
+                        <ul class="sugerencias" id="sug_edit_tipo_menu"></ul>
+                    </div>
+
+                    <div class="campo">
+                        <label for="edit_menu">Menú:</label>
+                        <div class="input-con-icono">
+                            <input type="text" id="edit_menu" name="menu" class="menu" autocomplete="off" readonly placeholder="Seleccionar...">
+                            <span class="flecha-desplegar" onclick="mostrarTodo(this.previousElementSibling)">▼</span>
+                        </div>
+                        <ul class="sugerencias" id="sug_edit_menu"></ul>
+                    </div>
+
+                    <div class="campo">
+                        <label for="edit_guarnicion">Guarnición:</label>
+                        <div class="fila-horizontal">
+                            <div class="input-con-icono">
+                                <input type="text" id="edit_guarnicion" name="guarnicion" class="guarnicion" readonly placeholder="Seleccionar...">
+                                <span class="flecha-desplegar" onclick="mostrarTodo(this.previousElementSibling)">▼</span>
+                            </div>
+                        </div>
+                        <ul class="sugerencias" id="sug_edit_guarnicion"></ul>
+                    </div>
+
+                    <div class="campo">
+                        <label for="edit_cantidad">Cantidad:</label>
+                        <div class="contador">
+                            <input type="number" id="edit_cantidad" name="cantidad" class="cantidad" min="1">
+                        </div>
+                    </div>
+
+                    <div class="campo">
+                        <label for="edit_descripcion">Descripción:</label>
+                        <div class="input-radio">
+                            <input type="text" id="edit_descripcion" name="descripcion" class="descripcion" autocomplete="off" placeholder="Detalles extra...">
+                        </div>
+                        <ul class="sugerencias" id="sug_edit_descripcion"></ul>
+                    </div>
+
+                    <div class="campo">
+                        <label for="edit_forma_pago">Forma de pago:</label>
+                        <div class="fila-horizontal">
+                            <div class="input-con-icono">
+                                <input type="text" id="edit_forma_pago" name="forma_pago" class="forma_pago" readonly placeholder="Seleccionar...">
+                                <span class="flecha-desplegar" onclick="mostrarTodo(this.previousElementSibling)">▼</span>
+                            </div>
+                        </div>
+                        <ul class="sugerencias" id="sug_edit_forma_pago"></ul>
+                    </div>
+
+                    <div class="campo">
+                        <label for="edit_estado">Estado:</label>
+                        <div class="input-con-icono">
+                            <input type="text" id="edit_estado" name="estado" class="estado" readonly placeholder="Seleccionar...">
+                            <span class="flecha-desplegar" onclick="mostrarTodo(this.previousElementSibling)">▼</span>
+                        </div>
+                        <ul class="sugerencias" id="sug_edit_estado"></ul>
+                    </div>
+                </div>
+
+                <div class="campo">
+                    <label for="edit_cadete">Cadete:</label>
+                    <div class="fila-horizontal">
+                        <div class="input-con-icono">
+                            <input type="text" id="edit_cadete" name="cadete" readonly placeholder="Seleccionar...">
+                            <span class="flecha-desplegar" onclick="mostrarTodo(this.previousElementSibling)">▼</span>
+                        </div>
+                        <!-- CHECKBOX DE CLIENTE FRECUENTE PARA EDICIÓN -->
+                    <div style="display: flex; align-items: center; gap: 5px;" title="Mantener marcado para conservar al cliente en la lista diaria">
+                        <input type="checkbox" id="edit_chkFrecuente" style="width: 18px; height: 18px; cursor: pointer; accent-color: #28a745;">
+                        <label for="edit_chkFrecuente" style="cursor: pointer; font-weight: bold; color: #333; margin: 0; white-space: nowrap;">Cliente frecuente</label>
+                    </div>
+                    </div>
+                    <ul id="sug_edit_cadete" class="sugerencias"></ul>
+                </div>
+
+                <div class="botones-pedido">
+                    <button type="button" onclick="guardarEdicionPedido()" id="btnCargarPedido" style="background-color: #28a745;">💾 Guardar Cambios</button>
+                    <button type="button" onclick="cerrarModalEditar()" style="background-color: #d32f2f; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">❌ Cancelar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+            <div id="modalCantidades" class="modal">
+                <div class="modal-contenido">
+                    <span class="cerrar" onclick="cerrarModalCantidades()">&times;</span>
+                    
+                    <h3>📊 Totales del Día</h3>
+
+                    <div style="flex: 1; overflow: hidden; position: relative; width: 100%;">
+                        <div id="contenedorEscalable">
+                            <div id="contenedorTotalesUnificados" class="contenedor-flex-tipos">
+                                </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer-custom">
+                        <div class="botones-pedido" style="display: flex; justify-content: center; gap: 10px; margin: 0; margin-top: 15px;">
+                            <button type="button" onclick="abrirModalCantidades()" class="btn-actualizar">
+                                ↻ Actualizar
+                            </button>
+                            <button type="button" onclick="cerrarModalCantidades()"  class="btn-cerrar-modal-cant">
+                                Cerrar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+        <div id="modalGestorItems" class="modal">
+            <div class="modal-contenido">
+                <span class="cerrar" onclick="cerrarModalGestorItems()">&times;</span>
+                <h3 id="tituloGestorItems">Gestor de Ítems</h3>
+                
+                <input type="hidden" id="tipoGestorActual">
+                
+                <div style="margin-bottom: 15px;">
+                    <input type="text" id="buscadorGestorItems" placeholder="🔍 Buscar ítem..." oninput="filtrarGestorItems()" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                </div>
+
+                <ul id="listaGestorItems" class="lista-gestor">
+                    </ul>
+            </div>
+        </div>
+
+<!----- Modal Principal: Sección CADETES (Rendición semanal) ---->
+<div id="modalListaCadetes" class="modal">
+    <div class="modal-contenido">
+        <span class="cerrar" onclick="cerrarModalListaCadetes()">&times;</span>
+        <!-- Título con la fecha de hoy en la esquina izquierda -->
+        <h3 style="position: relative;">
+            <span id="fecha_hoy_esquina" style="position: absolute; left: 20px; font-size: 13px; font-weight: normal; color: #555; margin-top: 4px;"></span>
+            Rendición de cadetes
+        </h3>
+        
+        <div style="flex: 1; overflow: hidden; position: relative; width: 100%; padding: 20px; box-sizing: border-box;">
+            <div id="contenedorListaCadetes">
+                
+                <!-- Buscador y Fechas -->
+                <div class="filtros-cadetes" style="display: flex; gap: 15px; margin-bottom: 20px; align-items: flex-end; justify-content: space-between; flex-wrap: wrap;">
+                    
+                    <!-- Izquierda: Buscador de Cadete (achicamos un poco el max-width) -->
+                    <div class="campo" style="margin-bottom: 0; min-width: 150px; flex: 1; max-width: 220px;">
+                        <label for="filtro_cadete_rendicion" style="margin-bottom: 4px; display: block; font-weight: bold; font-size: 14px;">Cadete:</label>
+                        <div class="input-con-icono">
+                            <input type="text" id="filtro_cadete_rendicion" name="cadete" placeholder="Elegir cadete.. " autocomplete="off" onclick="this.value=''; this.dispatchEvent(new Event('input')); mostrarTodo(this);" oninput="filtrar(this)" style="width: 100%; box-sizing: border-box;">
+                        </div>
+                        <ul id="sug_filtro_cadete_rendicion" class="sugerencias"></ul>
+                    </div>
+
+                    <!-- Derecha: Fechas y Botón Buscar (con justify-content al final) -->
+                    <div style="display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; flex: 2; justify-content: flex-end;">
+                        <div>
+                            <label for="fecha_desde_cadete" style="margin-bottom: 4px; display: block; font-weight: bold; font-size: 14px;">Desde:</label>
+                            <input type="date" id="fecha_desde_cadete" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+                        </div>
+                        <div>
+                            <label for="fecha_hasta_cadete" style="margin-bottom: 4px; display: block; font-weight: bold; font-size: 14px;">Hasta:</label>
+                            <input type="date" id="fecha_hasta_cadete" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+                        </div>
+                        <button type="button" class="btn-buscar" onclick="buscarRendicionCadete()" style="padding: 7px 18px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; height: 32px; transition: 0.2s;">
+                            Buscar
+                        </button>
+                    </div>
+                </div>
+                
+                
+                <!-- Tabla de Rendición -->
+                <div class="tabla-scroll" id="contenedorTablaRendicion" style="margin-top: 0; overflow: hidden; pointer-events: none; opacity: 0.4; transition: 0.3s;">
+                    <table class="sheet" id="tablaRendicionCadetes">
+                        <thead>
+                            <tr>
+                                <th style="width: 15%; text-align: left;">Concepto</th>
+                                <th class="dia-clickeable" data-dia="1" ondblclick="abrirModalEdicionDia(this)" title="Doble click para editar el Lunes">Lunes</th>
+                                <th class="dia-clickeable" data-dia="2" ondblclick="abrirModalEdicionDia(this)" title="Doble click para editar el Martes">Martes</th>
+                                <th class="dia-clickeable" data-dia="3" ondblclick="abrirModalEdicionDia(this)" title="Doble click para editar el Miércoles">Miércoles</th>
+                                <th class="dia-clickeable" data-dia="4" ondblclick="abrirModalEdicionDia(this)" title="Doble click para editar el Jueves">Jueves</th>
+                                <th class="dia-clickeable" data-dia="5" ondblclick="abrirModalEdicionDia(this)" title="Doble click para editar el Viernes">Viernes</th>
+                                <th style="width: 12%; text-align: center; background-color: #021a03;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                        <!-- Fila de Dinero -->
+                            <tr>
+                                <td style="font-weight: bold; background-color: #f9f9f9;">Dinero sobrante</td>
+                                <td class="texto-centro"><input type="number" class="input-rendicion" data-dia="1" data-tipo="dinero" placeholder="$0"></td>
+                                <td class="texto-centro"><input type="number" class="input-rendicion" data-dia="2" data-tipo="dinero" placeholder="$0"></td>
+                                <td class="texto-centro"><input type="number" class="input-rendicion" data-dia="3" data-tipo="dinero" placeholder="$0"></td>
+                                <td class="texto-centro"><input type="number" class="input-rendicion" data-dia="4" data-tipo="dinero" placeholder="$0"></td>
+                                <td class="texto-centro"><input type="number" class="input-rendicion" data-dia="5" data-tipo="dinero" placeholder="$0"></td>
+                                <td class="texto-centro" style="font-weight: bold; font-size: 14px;" id="total_dinero_semana">$0</td>
+                            </tr>
+                            
+                                        <!-- Fila de Viajes -->
+                            <tr>
+                                <td style="font-weight: bold; background-color: #f9f9f9;">Viajes</td>
+                                <td class="texto-centro"><input type="number" class="input-rendicion" data-dia="1" data-tipo="viajes" placeholder="0"></td>
+                                <td class="texto-centro"><input type="number" class="input-rendicion" data-dia="2" data-tipo="viajes" placeholder="0"></td>
+                                <td class="texto-centro"><input type="number" class="input-rendicion" data-dia="3" data-tipo="viajes" placeholder="0"></td>
+                                <td class="texto-centro"><input type="number" class="input-rendicion" data-dia="4" data-tipo="viajes" placeholder="0"></td>
+                                <td class="texto-centro"><input type="number" class="input-rendicion" data-dia="5" data-tipo="viajes" placeholder="0"></td>
+                                <td class="texto-centro" style="font-weight: bold; font-size: 14px;" id="total_viajes_semana">0</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold; background-color: #f9f9f9;">Descripción</td>
+                                
+                                <td class="texto-centro" data-dia="1" ondblclick="abrirModalEdicionDia(this)" title="Doble click para editar">
+                                    <input type="hidden" class="input-rendicion-texto" data-dia="1" data-tipo="descripcion">
+                                    <div class="desc-ui" data-dia="1" style="font-size: 12px; color: #888; cursor: pointer;">Sin descr.</div>
+                                </td>
+                                
+                                <td class="texto-centro" data-dia="2" ondblclick="abrirModalEdicionDia(this)" title="Doble click para editar">
+                                    <input type="hidden" class="input-rendicion-texto" data-dia="2" data-tipo="descripcion">
+                                    <div class="desc-ui" data-dia="2" style="font-size: 12px; color: #888; cursor: pointer;">Sin descr.</div>
+                                </td>
+                                
+                                <td class="texto-centro" data-dia="3" ondblclick="abrirModalEdicionDia(this)" title="Doble click para editar">
+                                    <input type="hidden" class="input-rendicion-texto" data-dia="3" data-tipo="descripcion">
+                                    <div class="desc-ui" data-dia="3" style="font-size: 12px; color: #888; cursor: pointer;">Sin descr.</div>
+                                </td>
+                                
+                                <td class="texto-centro" data-dia="4" ondblclick="abrirModalEdicionDia(this)" title="Doble click para editar">
+                                    <input type="hidden" class="input-rendicion-texto" data-dia="4" data-tipo="descripcion">
+                                    <div class="desc-ui" data-dia="4" style="font-size: 12px; color: #888; cursor: pointer;">Sin descr.</div>
+                                </td>
+                                
+                                <td class="texto-centro" data-dia="5" ondblclick="abrirModalEdicionDia(this)" title="Doble click para editar">
+                                    <input type="hidden" class="input-rendicion-texto" data-dia="5" data-tipo="descripcion">
+                                    <div class="desc-ui" data-dia="5" style="font-size: 12px; color: #888; cursor: pointer;">Sin descr.</div>
+                                </td>
+                                
+                                <td class="texto-centro" style="background-color: #f9f9f9;">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    
+        <div class="modal-footer-custom">
+            <div class="botones-pedido" style="display: flex; justify-content: center; gap: 10px; margin: 0; margin-top: 15px;">
+                <!-----<button type="button" onclick="guardarRendicionCadetes()" class="btn-actualizar">💾 Guardar</button>---->
+                <button type="button" onclick="cerrarModalListaCadetes()" class="btn-cerrar-modal-cant">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!----- Modal Chico: Edición Rápida de Día (Doble Click) ---->
+<div id="modalEdicionDiaCadete" class="modal" style="z-index: 9999;">
+    <div class="modal-contenido" style="width: 350px; padding: 25px;">
+        <span class="cerrar" onclick="cerrarModalEdicionDia()">&times;</span>
+        <h3 id="tituloEdicionDia" style="margin-bottom: 20px; font-size: 20px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">Editar Día</h3>
+        
+        <input type="hidden" id="edit_dia_index">
+        
+        <div class="campo" style="width: 100%;">
+            <label>Dinero sobrante:</label>
+            <input type="number" id="edit_dinero_dia" style="width: 100%; box-sizing: border-box; font-size: 16px; padding: 8px;">
+        </div>
+        <div class="campo" style="width: 100%;">
+            <label>Viajes:</label>
+            <input type="number" id="edit_viajes_dia" style="width: 100%; box-sizing: border-box; font-size: 16px; padding: 8px;">
+        </div>
+        <div class="campo" style="width: 100%;">
+            <label>Descripción:</label>
+            <textarea id="edit_descripcion_dia" rows="4" style="width: 100%; box-sizing: border-box; resize: vertical; border: 1px solid #ccc; border-radius: 4px; padding: 8px; font-family: inherit; font-size: 14px;"></textarea>
+        </div>
+        
+        <button onclick="aplicarEdicionDia()" style="background-color: #042505; color: white; padding: 10px; border: none; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 15px; font-size: 16px; transition: background 0.3s;">
+            Aplicar y Guardar
+        </button>
+    </div>
+</div>
+
+<!----- Modal Chico: Ver Descripción (Solo Lectura) ---->
+<div id="modalVerDescripcion" class="modal" style="z-index: 9999;">
+    <div class="modal-contenido" style="width: 300px; padding: 25px; text-align: center;">
+        <span class="cerrar" onclick="document.getElementById('modalVerDescripcion').style.display='none'">&times;</span>
+        <h3 style="margin-bottom: 15px; font-size: 18px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">Descripción</h3>
+        
+        <!-- Acá se va a inyectar el texto -->
+        <p id="textoDescripcionLectura" style="font-size: 15px; color: #333; text-align: left; white-space: pre-wrap; margin-bottom: 20px;"></p>
+        
+        <button onclick="document.getElementById('modalVerDescripcion').style.display='none'" style="background-color: #6c757d; color: white; padding: 8px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">
+            Cerrar
+        </button>
+    </div>
+</div>
+
+<!----- Modal Chico: SOLO Agregar Descripción (Atajo) ---->
+<div id="modalSoloDescripcion" class="modal" style="z-index: 9999;">
+    <div class="modal-contenido" style="width: 350px; padding: 25px;">
+        <span class="cerrar" onclick="document.getElementById('modalSoloDescripcion').style.display='none'">&times;</span>
+        <h3 style="margin-bottom: 20px; font-size: 20px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">Agregar Descripción</h3>
+        
+        <input type="hidden" id="solo_desc_dia_index">
+        
+        <div class="campo" style="width: 100%;">
+            <textarea id="solo_desc_texto" placeholder="Escribí la descripción acá..." rows="4" style="width: 100%; box-sizing: border-box; resize: vertical; border: 1px solid #ccc; border-radius: 4px; padding: 8px; font-family: inherit; font-size: 14px;"></textarea>
+        </div>
+        
+        <button onclick="guardarSoloDescripcion()" style="background-color: #042505; color: white; padding: 10px; border: none; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 15px; font-size: 16px; transition: background 0.3s;">
+            Guardar Descripción
+        </button>
+    </div>
+</div>
+<!--------------------- FIN MODAL CADETES MENU OPCIONES ------------------>
+
+    <template id="tpl-fila-pedido">
+        <div class="fila-dos fila-pedido">
+            
+            <div class="campo">
+                <input type="hidden" class="id_pedido_fila" value="">
+                <label class="lbl-nombre">Nombre:</label>
+                <div class="input-radio" style="display: flex; gap: 5px; align-items: center;">
+                    <input type="text" name="nombre" class="nombre" autocomplete="off" placeholder="Nombre cliente" aria-label="Nombre del cliente">
+                    <button type="button" class="btn-icono btn-add-subitem" onclick="agregarSubItem(this)" title="Agregar menú a esta persona" style="background: transparent; border: none; font-size: 11px; padding: 2px; cursor: pointer; box-shadow: none; opacity: 0.8;">➕</button>
+                </div>
+                <ul class="sugerencias sugerencias-nombre"></ul>
+            </div>
+
+            <div class="campo">
+                <label class="lbl-tipo_menu">Tipo de menú:</label>
+                <div class="fila-horizontal">
+                    <div class="input-con-icono">
+                        <input type="text" name="tipo_menu" class="tipo_menu" autocomplete="off" readonly placeholder="Seleccionar..." aria-label="Seleccionar tipo de menú">
+                        <span class="flecha-desplegar">▼</span>
+                    </div>
+                </div>
+                <ul class="sugerencias sugerencias-tipo_menu"></ul>
+            </div>
+
+            <div class="campo">
+                <label class="lbl-menu">Menú:</label>
+                <div class="input-con-icono">
+                    <input type="text" name="menu" class="menu" autocomplete="off" readonly placeholder="Seleccionar..." aria-label="Seleccionar menú">
+                    <span class="flecha-desplegar">▼</span>
+                </div>
+                <ul class="sugerencias sugerencias-menu"></ul>
+            </div>
+
+            <div class="campo">
+                <label class="lbl-guarnicion">Guarnición:</label>
+                <div class="fila-horizontal">
+                    <div class="input-con-icono">
+                        <input type="text" name="guarnicion" class="guarnicion" autocomplete="off" readonly placeholder="Seleccionar..." aria-label="Seleccionar guarnición">
+                        <span class="flecha-desplegar">▼</span>
+                    </div>
+                </div>
+                <ul class="sugerencias sugerencias-guarnicion"></ul>
+            </div>
+
+            <div class="campo">
+                <label class="lbl-cantidad">Cantidad:</label>
+                <div class="contador">
+                    <input type="number" name="cantidad" class="cantidad" value="1" min="1" aria-label="Cantidad">
+                </div>
+            </div>
+
+            <div class="campo">
+                <label class="lbl-descripcion">Descripción:</label>
+                <div class="input-radio">
+                    <input type="text" name="descripcion" class="descripcion" autocomplete="off" placeholder="Detalles extra..." aria-label="Descripción adicional">
+                </div>
+                <ul class="sugerencias sugerencias-descripcion"></ul>
+            </div>
+
+            <div class="campo">
+                <label class="lbl-forma_pago">Forma de pago:</label>
+                <div class="fila-horizontal">
+                    <div class="input-con-icono">
+                        <input type="text" name="forma_pago" class="forma_pago" autocomplete="off" readonly value="Pendiente" placeholder="Seleccionar..." aria-label="Forma de pago">
+                        <span class="flecha-desplegar">▼</span>
+                    </div>
+                </div>
+                <ul class="sugerencias sugerencias-forma_pago"></ul>
+            </div>
+
+            <div class="campo">
+                <label class="lbl-estado">Estado:</label>
+                <div class="input-con-icono">
+                    <input type="text" name="estado" class="estado" autocomplete="off" readonly value="Pendiente" placeholder="Seleccionar..." aria-label="Estado del pedido">
+                    <span class="flecha-desplegar">▼</span>
+                </div>
+                <ul class="sugerencias sugerencias-estado"></ul>
+            </div>
+
+            <div class="campo campo-boton-eliminar">
+                <span class="espaciador-cruz" style="display: none;">&nbsp;</span>
+                <div class="input-con-icono" style="height: 100%; display: flex; align-items: center;">
+                    <button type="button" class="btn-icono externo" onclick="removerFilaPedido(this)" aria-label="Eliminar esta fila">❌</button>
+                </div>
+            </div>
+
+        </div>
+    </template>
+
+    <script src="{% static 'gestion/js/api.js' %}"></script>
+    <script src="{% static 'gestion/js/exportar.js' %}"></script>
+    <script src="{% static 'gestion/js/sugerencias.js' %}"></script>
+    <script src="{% static 'gestion/js/modales.js' %}"></script>
+    <script src="{% static 'gestion/js/pedidos.js' %}?v=2"></script>
+    <script src="{% static 'gestion/js/totales.js' %}"></script> 
+    <script src="{% static 'gestion/js/gestor.js' %}"></script> 
+    <script src="{% static 'gestion/js/main.js' %}"></script>
+</body>
+</html>
