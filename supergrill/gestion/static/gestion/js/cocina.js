@@ -108,10 +108,10 @@ async function cargarDatos() {
         
         dibujar(conteoTipos, conteoGuarnicion);
         
-        // 👇 NUEVA LÓGICA: INYECTAR TOTALES SI ESTAMOS EN CELULAR 👇
+        // INYECTAR TOTALES SI ESTAMOS EN CELULAR 
         const divTotalesCelu = document.getElementById("totales-celular");
         if (divTotalesCelu) {
-            let htmlTotales = `<div style="display:flex; align-items:center;">TOTAL: <span class="badge-total-celu">${totalPlatosDelDia}</span></div>`;
+            let htmlTotales = `<div style="display:flex; align-items:center;">TOTALES: <span class="badge-total-celu">${totalPlatosDelDia}</span></div>`;
             
             // Si hay PedidosYa, le agregamos el cartelito rojo abajo
             if (totalPedidosYa > 0) {
@@ -120,7 +120,7 @@ async function cargarDatos() {
             
             divTotalesCelu.innerHTML = htmlTotales;
         }
-        // 👆 FIN NUEVA LÓGICA 👆
+        // FIN
 
         verificarMeta300(totalPlatosDelDia);
     } catch (e) { console.error("Error al cargar datos del monitor:", e); }
