@@ -1,0 +1,47 @@
+[
+    {
+        "id_empresa": 1,
+        "empresa": "0",
+        "es_frecuente": 0
+    },
+    {
+        "id_empresa": 2,
+        "empresa": "Candido pujato Steel",
+        "es_frecuente": 1
+    },
+    {
+        "id_empresa": 3,
+        "empresa": "ANCA",
+        "es_frecuente": 0
+    },
+    {
+        "id_empresa": 4,
+        "empresa": "DRAXXO",
+        "es_frecuente": 0
+    },
+    {
+        "id_empresa": 5,
+        "empresa": "CONSTRUCTORA",
+        "es_frecuente": 0
+    },
+    {
+        "id_empresa": 6,
+        "empresa": "TOLOSA",
+        "es_frecuente": 0
+    },
+    {
+        "id_empresa": 7,
+        "empresa": "COMEGA",
+        "es_frecuente": 0
+    },
+    {
+        "id_empresa": 8,
+        "empresa": "SOTEICA",
+        "es_frecuente": 0
+    },
+    {
+        "id_empresa": 9,
+        "empresa": "Mendoza 2716",
+        "es_frecuente": 0
+    }
+]

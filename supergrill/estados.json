@@ -1,0 +1,10 @@
+[
+    {
+        "id_estado": 2,
+        "estado": "Pagado"
+    },
+    {
+        "id_estado": 1,
+        "estado": "Pendiente"
+    }
+]

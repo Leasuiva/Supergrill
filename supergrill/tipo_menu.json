@@ -1,0 +1,47 @@
+[
+    {
+        "id_tipoMenu": 1,
+        "tipoMenu": "Tradicional",
+        "activo": 1
+    },
+    {
+        "id_tipoMenu": 2,
+        "tipoMenu": "Saludable",
+        "activo": 1
+    },
+    {
+        "id_tipoMenu": 3,
+        "tipoMenu": "Ensaladas",
+        "activo": 1
+    },
+    {
+        "id_tipoMenu": 4,
+        "tipoMenu": "Especial",
+        "activo": 1
+    },
+    {
+        "id_tipoMenu": 5,
+        "tipoMenu": "Menú del día",
+        "activo": -1
+    },
+    {
+        "id_tipoMenu": 6,
+        "tipoMenu": "0",
+        "activo": 1
+    },
+    {
+        "id_tipoMenu": 7,
+        "tipoMenu": "",
+        "activo": 1
+    },
+    {
+        "id_tipoMenu": 8,
+        "tipoMenu": "Menu del diaa",
+        "activo": 1
+    },
+    {
+        "id_tipoMenu": 9,
+        "tipoMenu": "Empresas",
+        "activo": 1
+    }
+]

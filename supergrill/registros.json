@@ -1,0 +1,46 @@
+[
+    {
+        "id_registro": 1,
+        "registro": "Activo"
+    },
+    {
+        "id_registro": 2,
+        "registro": "Eliminado"
+    },
+    {
+        "id_registro": 3,
+        "registro": "Modificado"
+    },
+    {
+        "id_registro": 4,
+        "registro": "Cargado"
+    },
+    {
+        "id_registro": 5,
+        "registro": "archivado_24-03-2026"
+    },
+    {
+        "id_registro": 6,
+        "registro": "archivado_30-03-2026"
+    },
+    {
+        "id_registro": 7,
+        "registro": "archivado_31-03-2026"
+    },
+    {
+        "id_registro": 8,
+        "registro": "archivado_01-04-2026"
+    },
+    {
+        "id_registro": 9,
+        "registro": "archivado_06-04-2026"
+    },
+    {
+        "id_registro": 10,
+        "registro": "archivado_08-04-2026"
+    },
+    {
+        "id_registro": 11,
+        "registro": "archivado_02-08-2026"
+    }
+]
