@@ -33,18 +33,18 @@ function ajustarLetra() {
     }
 }
 
-// 3. FESTEJO DE 300 PLATOS
+/* // 3. FESTEJO DE 300 PLATOS
 function verificarMeta300(totalPlatos) {
     const fechaHoy = new Date().toLocaleDateString('es-AR');
     const yaFestejamos = localStorage.getItem("festejo_300_" + fechaHoy);
 
-    if (totalPlatos >= 300 && !yaFestejamos) {
+    if (totalPlatos >= 500 && !yaFestejamos) {
         localStorage.setItem("festejo_300_" + fechaHoy, "true");
         dispararVideoCelebracion();
     }
 }
 
-/* function dispararVideoCelebracion() {
+function dispararVideoCelebracion() {
     if (document.getElementById("overlayFestejo")) return;
 
     const overlay = document.createElement("div");
@@ -52,10 +52,16 @@ function verificarMeta300(totalPlatos) {
     overlay.style.cssText = "position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; justify-content: center; align-items: center;";
 
     const video = document.createElement("video");
-    video.src = "/static/festejo300.mp4";
+    video.src = "/static/gestion/festejo300.mp4";
     video.style.cssText = "max-width: 95%; max-height: 95%; mix-blend-mode: screen; pointer-events: none;";
     video.controls = false;
-    video.muted = false; 
+    
+    // --- MAGIA PARA IPHONE ---
+    video.muted = true; // Apple obliga a que el autoplay nazca silenciado
+    video.playsInline = true; 
+    video.setAttribute("playsinline", ""); // Etiqueta obligatoria para iOS
+    video.setAttribute("webkit-playsinline", ""); // Soporte para iPhones más viejos
+    // -------------------------
 
     video.onended = () => overlay.remove();
     overlay.appendChild(video);

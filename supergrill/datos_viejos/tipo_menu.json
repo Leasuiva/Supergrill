@@ -2,12 +2,12 @@
     {
         "id_tipoMenu": 1,
         "tipoMenu": "Tradicional",
-        "activo": 1
+        "activo": -1
     },
     {
         "id_tipoMenu": 2,
         "tipoMenu": "Saludable",
-        "activo": 1
+        "activo": -1
     },
     {
         "id_tipoMenu": 3,
@@ -37,11 +37,31 @@
     {
         "id_tipoMenu": 8,
         "tipoMenu": "Menu del diaa",
-        "activo": 1
+        "activo": -1
     },
     {
         "id_tipoMenu": 9,
-        "tipoMenu": "Empresas",
+        "tipoMenu": "Menu del dia2",
+        "activo": 1
+    },
+    {
+        "id_tipoMenu": 10,
+        "tipoMenu": "Saludablee",
+        "activo": -1
+    },
+    {
+        "id_tipoMenu": 11,
+        "tipoMenu": "Menu Empresa",
+        "activo": -1
+    },
+    {
+        "id_tipoMenu": 12,
+        "tipoMenu": "Tradicional Viandera",
+        "activo": 1
+    },
+    {
+        "id_tipoMenu": 13,
+        "tipoMenu": "Tradicional Bar",
         "activo": 1
     }
 ]

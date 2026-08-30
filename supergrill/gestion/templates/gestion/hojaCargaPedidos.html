@@ -38,6 +38,7 @@
                                     <button onclick="abrirModalGuarnicion()">Nueva guarnición</button>
                                     <button onclick="abrirModalCadete()">Nuevo cadete</button>
                                     <button onclick="abrirModalFormaPago()">Nueva forma de pago</button>
+                                    <button onclick="abrirModalMonitor()">Nuevo monitor</button>
                                 </div>
                             </div>
                             <div class="submenu-container">
@@ -111,6 +112,13 @@
                     <ul id="sug_modal_nombre_menu" class="sugerencias"></ul>
                 </div>
 
+                <div class="campo" style="width: 100%; margin-top: 15px; margin-bottom: 15px;">
+                    <label style="font-weight: bold; margin-bottom: 5px; display: block;">Enviar a monitores:</label>
+                    <div id="contenedor_monitores_checkboxes" style="display: flex; gap: 15px; flex-wrap: wrap; background: #f9f9f9; padding: 10px; border-radius: 4px; border: 1px solid #ddd;">
+                        <!-- Acá JavaScript va a inyectar los casilleros automáticamente -->
+                    </div>
+                </div>
+
                 <button onclick="guardarTipoYMenu()">Guardar</button>
             </div>
         </div>
@@ -151,6 +159,19 @@
                         <ul id="sug_modal_cadete" class="sugerencias"></ul>
                     </div>
                     <button onclick="guardarCadete()">Guardar</button>
+                </div>
+            </div>
+
+    <!-- Modal del monitor -->
+    <div id="modalMonitor" class="modal">
+                <div class="modal-contenido">
+                    <span class="cerrar" onclick="cerrarModalMonitor()">&times;</span>
+                    <h3>Agregar Monitor</h3>
+                    <div class="campo" style="width: 100%;">
+                        <label for="modal_nombre_monitor">Nombre del monitor (Ej: Viandera, Bar):</label>
+                        <input type="text" id="modal_nombre_monitor" autocomplete="off">
+                    </div>
+                    <button onclick="guardarMonitor()">Guardar</button>
                 </div>
             </div>
 
@@ -312,6 +333,7 @@
                             <button type="button" onclick="abrirModalCadete()">🛵 Cadete</button>
                             <button type="button" onclick="abrirModalGuarnicion()">🥗 Guarnición</button>
                             <button type="button" onclick="abrirModalFormaPago()">💳 Forma de Pago</button>
+                            <button type="button" onclick="abrirModalMonitor()">🖥️ Monitor</button>
                         </div>
                     </div>
                     </div>

@@ -80,7 +80,7 @@ DATABASES = {
         'NAME': 'supergrill_django',                 # El nombre de tu base de datos
         'USER': 'root',
         'PASSWORD': '',                             # Tu contraseña de base de datos
-        'HOST': '127.0.0.1',
+        'HOST': 'localhost',
         'PORT': '3307',                       
     }
 }
@@ -121,3 +121,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None

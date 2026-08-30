@@ -84,5 +84,8 @@ urlpatterns = [
     path('guardar_rendicion_cadetes/', views.guardar_rendicion_cadetes, name='guardar_rendicion_cadetes'),
     path('buscar_rendicion_cadetes/', views.buscar_rendicion_cadetes, name='buscar_rendicion_cadetes'),
     path('api/sugerencias_historial/<str:tipo>', views.sugerencias_historial, name='sugerencias_historial'),
+
+    # -- RUTAS PARA MONITORES
+    path('agregar_monitor/', views.agregar_monitor, name='agregar_monitor'),
 ]
 

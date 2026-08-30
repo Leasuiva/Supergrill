@@ -33,5 +33,10 @@
         "id_forma_pago": 7,
         "forma_pago": "Semanal",
         "activo": 1
+    },
+    {
+        "id_forma_pago": 8,
+        "forma_pago": "0",
+        "activo": 1
     }
 ]

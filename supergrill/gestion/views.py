@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
-from .models import Cadete, Guarnicion, FormaPago, TipoMenu, Menu, Pedido, DetallePedido, Registro, Direccion, Empresa, Nombre, Estado, RegistroDiarioCadete
+from .models import Cadete, Guarnicion, FormaPago, TipoMenu, Menu, Pedido, DetallePedido, Registro, Direccion, Empresa, Nombre, Estado, RegistroDiarioCadete, Monitor
 from django.db import transaction
 from datetime import date
 from django.db.models import Sum, Max
@@ -95,10 +95,13 @@ def agregar_tipo_y_menu(request):
     tipo_str = data.get('tipo_menu', '').strip()
     menu_str = data.get('menu', '').strip()
     
+    # 1. Capturamos la lista de IDs de los monitores que tildó el usuario
+    lista_monitores = data.get('monitores', []) 
+    
     if not tipo_str or not menu_str:
         return JsonResponse({"error": "Faltan datos"}, status=400)
 
-    # 1. Buscar o crear el TIPO DE MENÚ
+    # Buscar o crear el TIPO DE MENÚ
     tipo_obj, created_tipo = TipoMenu.objects.get_or_create(tipoMenu=tipo_str)
     tipo_reactivado = False
     
@@ -108,7 +111,7 @@ def agregar_tipo_y_menu(request):
         tipo_obj.save()
         tipo_reactivado = True
 
-    # 2. Buscar o crear el MENÚ
+    # Buscar o crear el MENÚ
     menu_obj, created_menu = Menu.objects.get_or_create(nombre_menu=menu_str, tipo_menu=tipo_obj)
     menu_reactivado = False
     
@@ -118,9 +121,15 @@ def agregar_tipo_y_menu(request):
         menu_obj.save()
         menu_reactivado = True
 
-    # 3. Evaluar qué mensaje devolver a JavaScript
+    # 2. ACÁ ESTÁ LA MAGIA: Guardamos la relación de los monitores
+    if lista_monitores:
+        # .set() automáticamente limpia los viejos y asigna los nuevos
+        menu_obj.monitores.set(lista_monitores)
+
+    # Evaluar qué mensaje devolver a JavaScript
+    # (Cambié "nuevo" por "creado" para que coincida perfecto con la alerta de tu JS)
     if created_tipo or created_menu:
-        return JsonResponse({"estado": "nuevo"})
+        return JsonResponse({"estado": "creado"})
     elif tipo_reactivado or menu_reactivado:
         return JsonResponse({"estado": "reactivado"})
     else:
@@ -545,6 +554,23 @@ def estado_monitor(request):
     
     return JsonResponse({"version": version_actual})
 
+def agregar_monitor(request):
+    if request.method == 'POST':
+        try:
+            datos = json.loads(request.body)
+            nombre_nuevo = datos.get('monitor')
+            
+            # Buscamos si ya existe o lo creamos
+            monitor, creado = Monitor.objects.get_or_create(nombre=nombre_nuevo)
+            
+            # Si existía pero estaba oculto, lo reactivamos
+            if not creado and not monitor.activo:
+                monitor.activo = True
+                monitor.save()
+                
+            return JsonResponse({"estado": "creado" if creado else "reactivado"}, status=200)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
 # =================================================================
 # HISTORIAL DE ARCHIVADOS (archivados.js)
 # =================================================================

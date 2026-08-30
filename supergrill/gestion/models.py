@@ -2,6 +2,14 @@ from django.db import models
 from django.contrib.auth.models import User # El sistema de usuarios oficial de Django
 from django.utils import timezone
 
+# ------- Monitor -----
+class Monitor(models.Model):
+    nombre = models.CharField(max_length=50) 
+    activo = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.nombre
+
 class Direccion(models.Model):
     direccion = models.CharField(max_length=150)
     es_frecuente = models.BooleanField(default=False)
@@ -64,10 +72,10 @@ class Registro(models.Model):
 
 class Menu(models.Model):
     nombre_menu = models.CharField(max_length=100)
-    # Así se hacen las Foreign Keys en Django. ¡Simple y seguro!
     tipo_menu = models.ForeignKey(TipoMenu, on_delete=models.CASCADE)
     guarnicion = models.ForeignKey(Guarnicion, on_delete=models.SET_NULL, null=True, blank=True)
     activo = models.BooleanField(default=True)
+    monitores = models.ManyToManyField(Monitor, blank=True)
 
     def __str__(self):
         return f"{self.nombre_menu} ({self.tipo_menu.tipoMenu})"

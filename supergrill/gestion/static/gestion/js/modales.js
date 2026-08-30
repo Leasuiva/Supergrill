@@ -22,6 +22,7 @@ function cerrarModalGenerico(idModal) {
 window.abrirModalTipoMenu = () => {
     document.getElementById("modal_nombre_menu").value = "";
     abrirModalGenerico("modalTipoMenu", "modal_tipo_menu");
+    window.cargarMonitoresEnCheckboxes(); // Carga los monitores dinámicamente
 };
 window.cerrarModalTipoMenu = () => cerrarModalGenerico("modalTipoMenu");
 
@@ -101,14 +102,63 @@ window.guardarCadete = () => {
     guardarItemGenerico("/agregar_cadete", { cadete: val }, window.cerrarModalCadete);
 };
 
+
 window.guardarTipoYMenu = async () => {
     const tipo = document.getElementById("modal_tipo_menu").value.trim();
     const menu = document.getElementById("modal_nombre_menu").value.trim();
     const guarnicion = document.getElementById("guarnicion")?.value.trim() || null;
     
+    // ACÁ CAPTURAMOS LOS MONITORES TILDADOS
+    const checkboxes = document.querySelectorAll('input[name="monitores_menu"]:checked');
+    const monitores_seleccionados = Array.from(checkboxes).map(cb => cb.value);
+
     if (!tipo || !menu) return alert("⚠️ Completá tipo y nombre del menú.");
-    guardarItemGenerico("/agregar_tipo_y_menu", { tipo_menu: tipo, menu, guarnicion }, window.cerrarModalTipoMenu);
+    if (monitores_seleccionados.length === 0) return alert("⚠️ Seleccioná al menos un monitor.");
+
+    // Mandamos la lista de monitores al backend
+    guardarItemGenerico("/agregar_tipo_y_menu", { 
+        tipo_menu: tipo, 
+        menu: menu, 
+        guarnicion: guarnicion,
+        monitores: monitores_seleccionados 
+    }, window.cerrarModalTipoMenu);
 };
+
+// Monitor
+window.guardarMonitor = () => {
+    const val = document.getElementById("modal_nombre_monitor").value.trim();
+    if (!val) return alert("⚠️ Completá el nombre del monitor.");
+    
+    // Usamos tu función genérica y le pasamos una doble acción al cerrar
+    guardarItemGenerico("/agregar_monitor", { monitor: val }, () => {
+        window.cerrarModalMonitor();
+        window.cargarMonitoresEnCheckboxes(); // Refresca la lista visualmente
+    });
+};
+
+window.cargarMonitoresEnCheckboxes = async () => {
+    try {
+        const response = await fetch('/api/monitores/');
+        const monitores = await response.json();
+        
+        const contenedor = document.getElementById('contenedor_monitores_checkboxes');
+        if (!contenedor) return;
+        
+        contenedor.innerHTML = ''; // Limpiamos
+        
+        monitores.forEach(monitor => {
+            contenedor.innerHTML += `
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <input type="checkbox" name="monitores_menu" value="${monitor.id}" id="chk_monitor_${monitor.id}" checked>
+                    <label for="chk_monitor_${monitor.id}" style="margin: 0; cursor: pointer;">${monitor.nombre}</label>
+                </div>
+            `;
+        });
+    } catch (err) {
+        console.error("Error al cargar monitores:", err);
+    }
+};
+// -----------------------------------
 
 // --- 5. SUGERENCIAS DENTRO DE LOS MODALES ---
 function configurarSugerenciasModales() {
@@ -622,3 +672,6 @@ window.forzarSemanaRendicion = (e) => {
         window.buscarRendicionCadete();
     }
 };
+
+
+
